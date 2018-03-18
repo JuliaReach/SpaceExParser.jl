@@ -29,7 +29,7 @@ matrix:
 ## uncomment the following lines to override the default test script
 before_script:
   - julia -e 'Pkg.clone("https://github.com/JuliaReach/Systems.jl.git")'
-  - julia -e 'Pkg.clone("https://github.com/JuliaReach/Systems.jl.git")'
+  - julia -e 'Pkg.clone("https://github.com/blegat/HybridSystems.jl.git")'
 
 script:
   - julia -e 'Pkg.clone(pwd()); Pkg.build("SX"); Pkg.test("SX"; coverage=true)'
