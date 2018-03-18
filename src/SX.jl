@@ -1,5 +1,5 @@
 module SX
 
-# package code goes here
+using HybridSystems
 
 end # module
