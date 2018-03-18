@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<sspaceex xmlns="http://www-verimag.imag.fr/xml-namespaces/sspaceex" version="0.2" math="SpaceEx">
+  <component id="oscillator_template">
+    <param name="x" type="real" local="false" d1="1" d2="1" dynamics="any" />
+    <param name="y" type="real" local="true" d1="1" d2="1" dynamics="any" />
+    <param name="hop" type="label" local="true" />
+    <param name="a1" type="real" local="false" d1="1" d2="1" dynamics="const" />
+    <param name="a2" type="real" local="false" d1="1" d2="1" dynamics="const" />
+    <param name="c" type="real" local="false" d1="1" d2="1" dynamics="const" />
+    <param name="x0" type="real" local="false" d1="1" d2="1" dynamics="const" />
+    <param name="y0" type="real" local="false" d1="1" d2="1" dynamics="const" />
+    <location id="1" name="np" x="137.0" y="137.5" width="247.0" height="66.0">
+      <invariant>x&lt;=0 &amp; y &gt;= -c/x0*x</invariant>
+      <flow>x' == a1*x-a1*x0 &amp; y' == a2*y+a2*y0</flow>
+    </location>
+    <location id="2" name="nn" x="137.5" y="273.5" width="248.0" height="69.0">
+      <invariant>x&lt;=0 &amp; y &lt;= -c/x0*x</invariant>
+      <flow>x' == a1*x+a1*x0 &amp; y' == a2*y-a2*y0</flow>
+    </location>
+    <location id="3" name="pp" x="516.5" y="135.5" width="263.0" height="60.0">
+      <invariant>x&gt;=0 &amp; y &gt;= -c/x0*x</invariant>
+      <flow>x' == a1*x-a1*x0 &amp; y' == a2*y+a2*y0</flow>
+    </location>
+    <location id="4" name="pn" x="516.0" y="273.0" width="265.0" height="72.0">
+      <invariant>x&gt;=0 &amp; y &lt;= -c/x0*x</invariant>
+      <flow>x' == a1*x+a1*x0 &amp; y' == a2*y-a2*y0</flow>
+    </location>
+    <transition source="2" target="1">
+      <label>hop</label>
+      <labelposition x="-32.0" y="-24.0" />
+    </transition>
+    <transition source="1" target="3">
+      <label>hop</label>
+    </transition>
+    <transition source="3" target="4">
+      <label>hop</label>
+      <labelposition x="20.0" y="-24.0" />
+    </transition>
+    <transition source="4" target="2">
+      <label>hop</label>
+    </transition>
+  </component>
+  <component id="filter_t">
+    <param name="u" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="false" />
+    <param name="x" type="real" local="false" d1="1" d2="1" dynamics="any" />
+    <param name="c" type="real" local="false" d1="1" d2="1" dynamics="const" />
+    <location id="1" name="always" x="149.5" y="136.0" width="159.0" height="92.0">
+      <flow>x'==c*x-c*u</flow>
+    </location>
+  </component>
+  <component id="oscillator">
+    <param name="x" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
+    <bind component="oscillator_template" as="osci" x="230.0" y="55.0">
+      <map key="x">x</map>
+      <map key="a1">-2</map>
+      <map key="a2">-1</map>
+      <map key="c">0.5</map>
+      <map key="x0">0.7</map>
+      <map key="y0">0.7</map>
+    </bind>
+  </component>
+  <component id="filter_4th_order">
+    <param name="u" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="false" />
+    <param name="x" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
+    <param name="c" type="real" local="false" d1="1" d2="1" dynamics="const" controlled="true" />
+    <param name="x1" type="real" local="true" d1="1" d2="1" dynamics="any" controlled="true" />
+    <param name="x2" type="real" local="true" d1="1" d2="1" dynamics="any" controlled="true" />
+    <param name="x3" type="real" local="true" d1="1" d2="1" dynamics="any" controlled="true" />
+    <bind component="filter_t" as="f1" x="188.0" y="42.0">
+      <map key="u">u</map>
+      <map key="x">x1</map>
+      <map key="c">c</map>
+    </bind>
+    <bind component="filter_t" as="f2" x="187.0" y="171.0">
+      <map key="u">x1</map>
+      <map key="x">x2</map>
+      <map key="c">c</map>
+    </bind>
+    <bind component="filter_t" as="f3" x="188.0" y="303.0">
+      <map key="u">x2</map>
+      <map key="x">x3</map>
+      <map key="c">c</map>
+    </bind>
+    <bind component="filter_t" as="f4" x="187.0" y="439.0">
+      <map key="u">x3</map>
+      <map key="x">x</map>
+      <map key="c">c</map>
+    </bind>
+  </component>
+  <component id="filter_8th_order">
+    <param name="u" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="false" />
+    <param name="x" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
+    <param name="c" type="real" local="false" d1="1" d2="1" dynamics="const" controlled="true" />
+    <param name="x1" type="real" local="true" d1="1" d2="1" dynamics="any" controlled="true" />
+    <bind component="filter_4th_order" as="f4a" x="231.0" y="82.0">
+      <map key="u">u</map>
+      <map key="x">x1</map>
+      <map key="c">c</map>
+    </bind>
+    <bind component="filter_4th_order" as="f4b" x="232.0" y="209.0">
+      <map key="u">x1</map>
+      <map key="x">x</map>
+      <map key="c">c</map>
+    </bind>
+  </component>
+  <component id="osc_w_32th_order">
+    <param name="x" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
+    <param name="x1" type="real" local="true" d1="1" d2="1" dynamics="any" controlled="true" />
+    <param name="x2" type="real" local="true" d1="1" d2="1" dynamics="any" controlled="true" />
+    <param name="x3" type="real" local="true" d1="1" d2="1" dynamics="any" controlled="true" />
+    <param name="z" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="false" />
+    <bind component="oscillator" as="osc" x="219.0" y="27.0">
+      <map key="x">x</map>
+    </bind>
+    <bind component="filter_8th_order" as="f8a" x="220.0" y="99.0">
+      <map key="u">x</map>
+      <map key="x">x1</map>
+      <map key="c">-5</map>
+    </bind>
+    <bind component="filter_8th_order" as="f8b" x="221.0" y="208.0">
+      <map key="u">x1</map>
+      <map key="x">x2</map>
+      <map key="c">-5</map>
+    </bind>
+    <bind component="filter_8th_order" as="f8c" x="222.0" y="320.0">
+      <map key="u">x2</map>
+      <map key="x">x3</map>
+      <map key="c">-5</map>
+    </bind>
+    <bind component="filter_8th_order" as="f8d" x="225.0" y="429.0">
+      <map key="u">x3</map>
+      <map key="x">z</map>
+      <map key="c">-5</map>
+    </bind>
+  </component>
+</sspaceex>
+
