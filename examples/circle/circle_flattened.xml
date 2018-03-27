@@ -5,28 +5,12 @@
 <param name="y" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
 <param name="hop" type="label" local="false"/>
 <location id="1" name="p">
-   <note>Location constraints: loc()==p
-
-State variables: [x,y]
-real parts of Eigenvalues: [0,0], imag parts of Eigenvalues: [1,-1]
-Eigenvectors (columns): [
--1,0
-0,1
-]
- </note>
+ 
    <invariant>y &gt;= 0 </invariant>
    <flow>x&apos; == -y &amp; y&apos; == x </flow>
 </location>
 <location id="2" name="n">
-   <note>Location constraints: loc()==n
 
-State variables: [x,y]
-real parts of Eigenvalues: [0,0], imag parts of Eigenvalues: [1,-1]
-Eigenvectors (columns): [
--1,0
-0,1
-]
- </note>
    <invariant>y &lt;= 0 </invariant>
    <flow>x&apos; == -y &amp; y&apos; == x </flow>
 </location>
