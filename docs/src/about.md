@@ -52,3 +52,4 @@ $ julia --color=yes docs/make.jl
 These persons have contributed to `SX.jl` (in alphabetic order):
 
 - [Marcelo Forets](http://marcelo-forets.fr)
+- Nikos Kekatos
