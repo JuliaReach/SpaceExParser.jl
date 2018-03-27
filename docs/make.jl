@@ -1,11 +1,11 @@
-using Documenter, IntervalMatrices
+using Documenter, SX
 
 makedocs(
     doctest = true,  # use this flag to skip doctests (saves time!)
-    modules = [IntervalMatrices],
+    modules = [SX],
     format = :html,
     assets = ["assets/juliareach.css"],
-    sitename = "IntervalMatrices.jl",
+    sitename = "SX.jl",
     pages = [
         "Home" => "index.md",
         "Library" => Any[
@@ -16,7 +16,7 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/JuliaReach/IntervalMatrices.jl.git",
+    repo = "github.com/JuliaReach/SX.jl.git",
     target = "build",
     osname = "linux",
     julia  = "0.6",
