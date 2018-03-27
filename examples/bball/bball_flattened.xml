@@ -5,15 +5,6 @@
 <param name="v" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
 <param name="hop" type="label" local="false"/>
 <location id="1" name="always">
-   <note>Location constraints: true
-
-State variables: [x,v]
-real parts of Eigenvalues: [0,0], imag parts of Eigenvalues: [0,0]
-Eigenvectors (columns): [
-1,-1
-0,2.22044e-16
-]
- </note>
    <invariant>x &gt;= 0 </invariant>
    <flow>x&apos; == v &amp; v&apos; == -1 </flow>
 </location>
