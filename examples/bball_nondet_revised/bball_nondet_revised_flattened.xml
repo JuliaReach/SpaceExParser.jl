@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<sspaceex xmlns="http://www-verimag.imag.fr/xml-namespaces/sspaceex" version="0.2" math="SpaceEx">
+  <component id="system">
+    <param name="x" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="v" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="w1" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="false" />
+    <param name="w2" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="false" />
+    <param name="hop" type="label" local="false" />
+    <location id="1" name="always" x="436.0" y="326.0" width="722.0" height="112.0">
+      <note>Location constraints: true
+
+State variables: [x,v]
+real parts of Eigenvalues: [0,0], imag parts of Eigenvalues: [0,0]
+Eigenvectors (columns): [
+1,-1
+0,2.22044e-16
+]</note>
+      <invariant>x &gt;= 0 &amp; -0.05 &lt;= w1 &lt;= 0.05 &amp; -0.1 &lt;= w2 &lt;= 0.1</invariant>
+      <flow>x' == v &amp; v' == -1 + w1</flow>
+    </location>
+    <transition source="1" target="1">
+      <label>hop</label>
+      <guard>x == 0 &amp; v &lt; 0</guard>
+      <assignment>x' == x &amp; v' == -0.75*v +w2</assignment>
+      <labelposition x="-302.0" y="-109.0" width="612.0" height="100.0" />
+    </transition>
+  </component>
+</sspaceex>

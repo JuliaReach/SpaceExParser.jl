@@ -31,6 +31,7 @@
     </transition>
     <transition source="1" target="3">
       <label>hop</label>
+      <labelposition x="0.0" y="0.0" />
     </transition>
     <transition source="3" target="4">
       <label>hop</label>
@@ -38,6 +39,7 @@
     </transition>
     <transition source="4" target="2">
       <label>hop</label>
+      <labelposition x="0.0" y="0.0" />
     </transition>
   </component>
   <component id="filter_t">
@@ -100,4 +102,3 @@
     </bind>
   </component>
 </sspaceex>
-

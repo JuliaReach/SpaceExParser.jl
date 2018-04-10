@@ -1,44 +1,45 @@
-<?xml version="1.0" encoding="iso-8859-1" ?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <sspaceex xmlns="http://www-verimag.imag.fr/xml-namespaces/sspaceex" version="0.2" math="SpaceEx">
-<component id="circle">
-<param name="x" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
-<param name="y" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
-<param name="hop" type="label" local="false"/>
-<location id="1" name="p">
-   <note>Location constraints: loc()==p
+  <component id="circle">
+    <param name="x" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="y" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="hop" type="label" local="false" />
+    <location id="1" name="p" x="271.0" y="126.0" width="184.0" height="120.0">
+      <note>Location constraints: loc()==p
 
 State variables: [x,y]
 real parts of Eigenvalues: [0,0], imag parts of Eigenvalues: [1,-1]
 Eigenvectors (columns): [
 -1,0
 0,1
-]
- </note>
-   <invariant>y &gt;= 0 </invariant>
-   <flow>x&apos; == -y &amp; y&apos; == x </flow>
-</location>
-<location id="2" name="n">
-   <note>Location constraints: loc()==n
+]</note>
+      <invariant>y &gt;= 0</invariant>
+      <flow>x' == -y &amp; y' == x</flow>
+    </location>
+    <location id="2" name="n" x="275.0" y="355.0" width="176.0" height="140.0">
+      <note>Location constraints: loc()==n
 
 State variables: [x,y]
 real parts of Eigenvalues: [0,0], imag parts of Eigenvalues: [1,-1]
 Eigenvectors (columns): [
 -1,0
 0,1
-]
- </note>
-   <invariant>y &lt;= 0 </invariant>
-   <flow>x&apos; == -y &amp; y&apos; == x </flow>
-</location>
-<transition source="1" target="2">
-   <label>hop</label>
-   <guard> y == 0 </guard>
-   <assignment> x&apos; == x &amp; y&apos; == y </assignment>
-</transition>
-<transition source="2" target="1">
-   <label>hop</label>
-   <guard> y &gt;= 0 </guard>
-   <assignment> x&apos; == x &amp; y&apos; == y </assignment>
-</transition>
-</component>
+]</note>
+      <invariant>y &lt;= 0</invariant>
+      <flow>x' == -y &amp; y' == x</flow>
+    </location>
+    <transition source="1" target="2">
+      <label>hop</label>
+      <guard>y == 0</guard>
+      <assignment>x' == x &amp; y' == y</assignment>
+      <labelposition x="-115.0" y="-36.0" width="132.0" height="78.0" />
+    </transition>
+    <transition source="2" target="1">
+      <label>hop</label>
+      <guard>y &gt;= 0</guard>
+      <assignment>x' == x &amp; y' == y</assignment>
+      <labelposition x="-3.0" y="-31.0" width="116.0" height="62.0" />
+      <middlepoint x="321.0" y="240.5" />
+    </transition>
+  </component>
 </sspaceex>

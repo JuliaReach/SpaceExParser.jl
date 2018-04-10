@@ -1,17 +1,18 @@
-<?xml version="1.0" encoding="iso-8859-1" ?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <sspaceex xmlns="http://www-verimag.imag.fr/xml-namespaces/sspaceex" version="0.2" math="SpaceEx">
-<component id="system">
-<param name="x" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
-<param name="v" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
-<param name="hop" type="label" local="false"/>
-<location id="1" name="always">
-   <invariant>x &gt;= 0 </invariant>
-   <flow>x&apos; == v &amp; v&apos; == -1 </flow>
-</location>
-<transition source="1" target="1">
-   <label>hop</label>
-   <guard> x == 0 &amp; v &lt; 0 </guard>
-   <assignment> x&apos; == x &amp; v&apos; == -0.75*v </assignment>
-</transition>
-</component>
+  <component id="system">
+    <param name="x" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="v" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="hop" type="label" local="false" />
+    <location id="1" name="always" x="266.0" y="180.0" width="162.0" height="96.0">
+      <invariant>x &gt;= 0</invariant>
+      <flow>x' == v &amp; v' == -1</flow>
+    </location>
+    <transition source="1" target="1">
+      <label>hop</label>
+      <guard>x == 0 &amp; v &lt; 0</guard>
+      <assignment>x' == x &amp; v' == -0.75*v</assignment>
+      <labelposition x="-2.0" y="-68.0" width="168.0" height="66.0" />
+    </transition>
+  </component>
 </sspaceex>

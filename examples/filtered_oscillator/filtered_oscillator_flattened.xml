@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="iso-8859-1" ?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <sspaceex xmlns="http://www-verimag.imag.fr/xml-namespaces/sspaceex" version="0.2" math="SpaceEx">
-<component id="osc_w_4th_order">
-<param name="x" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
-<param name="y" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
-<param name="x1" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
-<param name="x2" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
-<param name="x3" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
-<param name="z" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
-<param name="osc.osci.hop" type="label" local="false"/>
-<location id="1" name="np~always~always~always~always">
-   <note>Location constraints: loc(osci)==np
+  <component id="osc_w_4th_order">
+    <param name="x" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="y" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="x1" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="x2" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="x3" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="z" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="unnamed" type="label" local="false" />
+    <location id="1" name="npalwaysalwaysalwaysalways" x="207.0" y="81.0" width="100.0" height="64.0">
+      <note>Location constraints: loc(osci)==np
 
 State variables: [x,y,x1,x2,x3,z]
 real parts of Eigenvalues: [-2,-4.99999,-5,-5,-4.99999,-1], imag parts of Eigenvalues: [0,0,0,0,0,0]
@@ -20,13 +20,12 @@ Eigenvectors (columns): [
 0.288874,3.88578e-16,3.20941e-16,-2.30212e-16,-3.92323e-16,3.33066e-16
 0.481457,-1.27364e-08,9.47175e-09,-1.4856e-08,1.99765e-08,1.11022e-16
 0.802429,-1.67575,-1.24621,1.24621,1.67575,1.11022e-16
-]
- </note>
-   <invariant>x &lt;= 0 &amp; y+0.714285*x &gt;= 0 </invariant>
-   <flow>x&apos; == -2*x+1.39999 &amp; osc.osci.y&apos; == -y-0.699999 &amp; f4.x1&apos; == 5*x-5*x1 &amp; f4.x2&apos; == 5*x1-5*x2 &amp; f4.x3&apos; == 5*x2-5*x3 &amp; z&apos; == 5*x3-5*z </flow>
-</location>
-<location id="2" name="nn~always~always~always~always">
-   <note>Location constraints: loc(osci)==nn
+]</note>
+      <invariant>x &lt;= 0 &amp; y+0.714285*x &gt;= 0</invariant>
+      <flow>x' == -2*x+1.39999 &amp; y' == -y-0.699999 &amp; x1' == 5*x-5*x1 &amp; x2' == 5*x1-5*x2 &amp; x3' == 5*x2-5*x3 &amp; z' == 5*x3-5*z</flow>
+    </location>
+    <location id="2" name="nnalwaysalwaysalwaysalways" x="604.0" y="78.0">
+      <note>Location constraints: loc(osci)==nn
 
 State variables: [x,y,x1,x2,x3,z]
 real parts of Eigenvalues: [-2,-4.99999,-5,-5,-4.99999,-1], imag parts of Eigenvalues: [0,0,0,0,0,0]
@@ -37,13 +36,12 @@ Eigenvectors (columns): [
 0.288874,3.88578e-16,3.20941e-16,-2.30212e-16,-3.92323e-16,3.33066e-16
 0.481457,-1.27364e-08,9.47175e-09,-1.4856e-08,1.99765e-08,1.11022e-16
 0.802429,-1.67575,-1.24621,1.24621,1.67575,1.11022e-16
-]
- </note>
-   <invariant>x &lt;= 0 &amp; y+0.714285*x &lt;= 0 </invariant>
-   <flow>x&apos; == -2*x-1.39999 &amp; osc.osci.y&apos; == -y+0.699999 &amp; f4.x1&apos; == 5*x-5*x1 &amp; f4.x2&apos; == 5*x1-5*x2 &amp; f4.x3&apos; == 5*x2-5*x3 &amp; z&apos; == 5*x3-5*z </flow>
-</location>
-<location id="3" name="pp~always~always~always~always">
-   <note>Location constraints: loc(osci)==pp
+]</note>
+      <invariant>x &lt;= 0 &amp; y+0.714285*x &lt;= 0</invariant>
+      <flow>x' == -2*x-1.39999 &amp; y' == -y+0.699999 &amp; x1' == 5*x-5*x1 &amp; x2' == 5*x1-5*x2 &amp; x3' == 5*x2-5*x3 &amp; z' == 5*x3-5*z</flow>
+    </location>
+    <location id="3" name="ppalwaysalwaysalwaysalways" x="210.0" y="308.0">
+      <note>Location constraints: loc(osci)==pp
 
 State variables: [x,y,x1,x2,x3,z]
 real parts of Eigenvalues: [-2,-4.99999,-5,-5,-4.99999,-1], imag parts of Eigenvalues: [0,0,0,0,0,0]
@@ -54,13 +52,12 @@ Eigenvectors (columns): [
 0.288874,3.88578e-16,3.20941e-16,-2.30212e-16,-3.92323e-16,3.33066e-16
 0.481457,-1.27364e-08,9.47175e-09,-1.4856e-08,1.99765e-08,1.11022e-16
 0.802429,-1.67575,-1.24621,1.24621,1.67575,1.11022e-16
-]
- </note>
-   <invariant>x &gt;= 0 &amp; y+0.714285*x &gt;= 0 </invariant>
-   <flow>x&apos; == -2*x+1.39999 &amp; osc.osci.y&apos; == -y-0.699999 &amp; f4.x1&apos; == 5*x-5*x1 &amp; f4.x2&apos; == 5*x1-5*x2 &amp; f4.x3&apos; == 5*x2-5*x3 &amp; z&apos; == 5*x3-5*z </flow>
-</location>
-<location id="4" name="pn~always~always~always~always">
-   <note>Location constraints: loc(osci)==pn
+]</note>
+      <invariant>x &gt;= 0 &amp; y+0.714285*x &gt;= 0</invariant>
+      <flow>x' == -2*x+1.39999 &amp; y' == -y-0.699999 &amp; x1' == 5*x-5*x1 &amp; x2' == 5*x1-5*x2 &amp; x3' == 5*x2-5*x3 &amp; z' == 5*x3-5*z</flow>
+    </location>
+    <location id="4" name="pnalwaysalwaysalwaysalways" x="606.0" y="315.0">
+      <note>Location constraints: loc(osci)==pn
 
 State variables: [x,y,x1,x2,x3,z]
 real parts of Eigenvalues: [-2,-4.99999,-5,-5,-4.99999,-1], imag parts of Eigenvalues: [0,0,0,0,0,0]
@@ -71,30 +68,29 @@ Eigenvectors (columns): [
 0.288874,3.88578e-16,3.20941e-16,-2.30212e-16,-3.92323e-16,3.33066e-16
 0.481457,-1.27364e-08,9.47175e-09,-1.4856e-08,1.99765e-08,1.11022e-16
 0.802429,-1.67575,-1.24621,1.24621,1.67575,1.11022e-16
-]
- </note>
-   <invariant>x &gt;= 0 &amp; y+0.714285*x &lt;= 0 </invariant>
-   <flow>x&apos; == -2*x-1.39999 &amp; osc.osci.y&apos; == -y+0.699999 &amp; f4.x1&apos; == 5*x-5*x1 &amp; f4.x2&apos; == 5*x1-5*x2 &amp; f4.x3&apos; == 5*x2-5*x3 &amp; z&apos; == 5*x3-5*z </flow>
-</location>
-<transition source="3" target="4">
-   <label>osc.osci.hop</label>
-   <guard> y+0.714285*x == 0 &amp; x &gt;= 0 </guard>
-   <assignment> x&apos; == x &amp; osc.osci.y&apos; == y &amp; f4.x1&apos; == x1 &amp; f4.x2&apos; == x2 &amp; f4.x3&apos; == x3 &amp; z&apos; == z </assignment>
-</transition>
-<transition source="4" target="2">
-   <label>osc.osci.hop</label>
-   <guard> x == 0 &amp; 0.714285*x+y &lt;= 0 </guard>
-   <assignment> x&apos; == x &amp; osc.osci.y&apos; == y &amp; f4.x1&apos; == x1 &amp; f4.x2&apos; == x2 &amp; f4.x3&apos; == x3 &amp; z&apos; == z </assignment>
-</transition>
-<transition source="2" target="1">
-   <label>osc.osci.hop</label>
-   <guard> y+0.714285*x == 0 &amp; x &lt;= 0 </guard>
-   <assignment> x&apos; == x &amp; osc.osci.y&apos; == y &amp; f4.x1&apos; == x1 &amp; f4.x2&apos; == x2 &amp; f4.x3&apos; == x3 &amp; z&apos; == z </assignment>
-</transition>
-<transition source="1" target="3">
-   <label>osc.osci.hop</label>
-   <guard> x == 0 &amp; 0.714285*x+y &gt;= 0 </guard>
-   <assignment> x&apos; == x &amp; osc.osci.y&apos; == y &amp; f4.x1&apos; == x1 &amp; f4.x2&apos; == x2 &amp; f4.x3&apos; == x3 &amp; z&apos; == z </assignment>
-</transition>
-</component>
+]</note>
+      <invariant>x &gt;= 0 &amp; y+0.714285*x &lt;= 0</invariant>
+      <flow>x' == -2*x-1.39999 &amp; y' == -y+0.699999 &amp; x1' == 5*x-5*x1 &amp; x2' == 5*x1-5*x2 &amp; x3' == 5*x2-5*x3 &amp; z' == 5*x3-5*z</flow>
+    </location>
+    <transition source="3" target="4">
+      <guard>y+0.714285*x == 0 &amp; x &gt;= 0</guard>
+      <assignment>x' == x &amp; y' == y &amp; x1' == x1 &amp; x2' == x2 &amp; x3' == x3 &amp; z' == z</assignment>
+      <labelposition x="0.0" y="0.0" />
+    </transition>
+    <transition source="4" target="2">
+      <guard>x == 0 &amp; 0.714285*x+y &lt;= 0</guard>
+      <assignment>x' == x &amp; y' == y &amp; x1' == x1 &amp; x2' == x2 &amp; x3' == x3 &amp; z' == z</assignment>
+      <labelposition x="1.0" y="0.0" />
+    </transition>
+    <transition source="2" target="1">
+      <guard>y+0.714285*x == 0 &amp; x &lt;= 0</guard>
+      <assignment>x' == x &amp; y' == y &amp; x1' == x1 &amp; x2' == x2 &amp; x3' == x3 &amp; z' == z</assignment>
+      <labelposition x="0.0" y="0.0" />
+    </transition>
+    <transition source="1" target="3">
+      <guard>x == 0 &amp; 0.714285*x+y &gt;= 0</guard>
+      <assignment>x' == x &amp; y' == y &amp; x1' == x1 &amp; x2' == x2 &amp; x3' == x3 &amp; z' == z</assignment>
+      <labelposition x="0.0" y="0.0" />
+    </transition>
+  </component>
 </sspaceex>

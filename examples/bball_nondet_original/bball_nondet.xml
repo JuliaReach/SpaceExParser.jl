@@ -7,43 +7,40 @@
     <param name="c" type="real" local="false" d1="1" d2="1" dynamics="const" />
     <param name="eps" type="real" local="false" d1="1" d2="1" dynamics="const" />
     <param name="hop" type="label" local="false" />
-    <location id="1" name="always" x="329.5" y="225.5" width="135.0" height="73.0">
-      <invariant>x &gt;= 0</invariant>
-      <flow>x' == v &amp; v' == -g</flow>
+    <param name="w1" type="real" local="false" d1="1" d2="1" dynamics="any" />
+    <param name="w2" type="real" local="false" d1="1" d2="1" dynamics="any" />
+    <location id="1" name="always" x="396.5" y="235.0" width="365.0" height="64.0">
+      <invariant>x &gt;= 0 &amp; -0.05 &lt;= w1 &lt;= 0.05 &amp; -0.1 &lt;= w2 &lt;= 0.1</invariant>
+      <flow>x' == v &amp; v' == -g + w1</flow>
     </location>
     <transition source="1" target="1">
       <label>hop</label>
       <guard>x &lt;= eps &amp; v &lt; 0</guard>
-      <assignment>v := -c*v</assignment>
-      <labelposition x="-135.0" y="-73.0" width="216.0" height="56.0" />
+      <assignment>v := -c*v + w2</assignment>
+      <labelposition x="-86.0" y="-82.0" width="176.0" height="76.0" />
     </transition>
   </component>
-  <component id="timer_template">
-    <param name="t" type="real" local="false" d1="1" d2="1" dynamics="any" />
-    <location id="1" name="running" x="149.0" y="110.0">
-      <flow>t'==1</flow>
-    </location>
-  </component>
   <component id="system">
-    <note>A bouncing ball with an additional clock variable t. 
-Note that the analysis no longer terminates as t goes to infinity. Termination is forced by setting a limit on the number of iterations of the analysis algorithm.
-Try box, octagonal and uniform constraints. 
+    <note>A model of the vertical position x of a bouncing ball, with nondeterministic disturbances on the fall speed and the jump speed.
 
-Variables: x,v,t</note>
+Note the difference the choice of template directions makes: 
+Try box, octagonal and uniform with at least 10 constraints and watch for termination. 
+
+Variables: x,v</note>
     <param name="x" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
     <param name="v" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
     <param name="hop" type="label" local="false" />
-    <param name="t" type="real" local="false" d1="1" d2="1" dynamics="any" controlled="true" />
+    <param name="w1" type="real" local="false" d1="1" d2="1" dynamics="any" />
+    <param name="w2" type="real" local="false" d1="1" d2="1" dynamics="any" />
     <bind component="ball_template" as="ball" x="238.0" y="106.0">
       <map key="x">x</map>
       <map key="v">v</map>
       <map key="g">1</map>
       <map key="c">0.75</map>
-      <map key="eps">0.1</map>
+      <map key="eps">0</map>
       <map key="hop">hop</map>
-    </bind>
-    <bind component="timer_template" as="timer" x="238.0" y="296.0">
-      <map key="t">t</map>
+      <map key="w1">w1</map>
+      <map key="w2">w2</map>
     </bind>
   </component>
 </sspaceex>
