@@ -21,15 +21,17 @@ sources:
 
 ### Remarks
 
-The examples consist of single hybrid automata that are constructed via flattening (parallel composition). This can be done via SpaceEx executable file with the command ``spaceex -g name.cfg -m name.xml --output-system-file new_name.xml``
+The examples consist of single hybrid automata that are constructed via flattening (parallel composition). This can be done via SpaceEx executable file with the command 
+
+`spaceex -g name.cfg -m name.xml --output-system-file new_name.xml`
 
 However, note that the flattening process change the original model and may induce parsing errors. The parsing errors only appear when the constructed model is visualized/analyzed with the Model Editor or/and the Web Interface. There are no parsing errors with the source code/executable SpaceEx. A list of identified parsing problems follows below. 
 
-		1. Special symbols, e.g. ~, _ in the variable and location names
-		2. Characters and symbols in the notes
-		3. Nondeterministic flows, e.g. x'==x+w, where 0<w1<0.1 (see bball_nondet)
-		4. Nondeterministic resets, e.g. v' == -0.75*v+w2 (see bball_nondet)
-		5. Naming issues, e.g. default variable name is component.subcomponent.variable
+1. Special symbols, e.g. ~, _ in the variable and location names
+2. Characters and symbols in the notes
+3. Nondeterministic flows, e.g. x'==x+w, where 0<w1<0.1 (see bball_nondet)
+4. Nondeterministic resets, e.g. v' == -0.75*v+w2 (see bball_nondet)
+5. Naming issues, e.g. default variable name is component.subcomponent.variable
 
 The aforementioned problems would yield errors/warnings when parsed.
 
