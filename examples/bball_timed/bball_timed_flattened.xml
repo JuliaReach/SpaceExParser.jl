@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="iso-8859-1" ?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <sspaceex xmlns="http://www-verimag.imag.fr/xml-namespaces/sspaceex" version="0.2" math="SpaceEx">
-<component id="system">
-<param name="x" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
-<param name="v" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
-<param name="t" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
-<param name="hop" type="label" local="false"/>
-<location id="1" name="always~running">
-   <note>Location constraints: true
+  <component id="system">
+    <param name="x" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="v" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="t" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
+    <param name="hop" type="label" local="false" />
+    <location id="1" name="unnamed" x="366.0" y="235.0" width="178.0" height="118.0">
+      <note>Location constraints: true
 
 State variables: [x,v,t]
 real parts of Eigenvalues: [0,0,0], imag parts of Eigenvalues: [0,0,0]
@@ -14,15 +14,15 @@ Eigenvectors (columns): [
 1,-1,0
 0,2.22045e-16,0
 0,0,1
-]
- </note>
-   <invariant>x &gt;= -0 </invariant>
-   <flow>x&apos; == v &amp; v&apos; == -1 &amp; t&apos; == 1 </flow>
-</location>
-<transition source="1" target="1">
-   <label>hop</label>
-   <guard> x &lt;= 0.100001 &amp; v &lt; -0 &amp; x &gt;= -0 </guard>
-   <assignment> x&apos; == x &amp; v&apos; == -0.75*v &amp; t&apos; == t </assignment>
-</transition>
-</component>
+]</note>
+      <invariant>x &gt;= -0</invariant>
+      <flow>x' == v &amp; v' == -1 &amp; t' == 1</flow>
+    </location>
+    <transition source="1" target="1">
+      <label>hop</label>
+      <guard>x &lt;= 0.100001 &amp; v &lt; -0 &amp; x &gt;= -0</guard>
+      <assignment>x' == x &amp; v' == -0.75*v &amp; t' == t</assignment>
+      <labelposition x="-129.0" y="-68.0" width="326.0" height="62.0" />
+    </transition>
+  </component>
 </sspaceex>

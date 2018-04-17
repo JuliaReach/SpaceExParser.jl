@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<sspaceex xmlns="http://www-verimag.imag.fr/xml-namespaces/sspaceex" version="0.2" math="SpaceEx">
+<component id="system">
+<param name="x" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
+<param name="v" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true"/>
+<param name="w1" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="false"/>
+<param name="w2" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="false"/>
+<param name="hop" type="label" local="false"/>
+<location id="1" name="always">
+   <note>Location constraints: true
+
+State variables: [x,v]
+real parts of Eigenvalues: [0,0], imag parts of Eigenvalues: [0,0]
+Eigenvectors (columns): [
+1,-1
+0,2.22044e-16
+]
+ </note>
+   <invariant>x &gt;= 0 </invariant>
+   <flow>x&apos; == v &amp; v&apos; == -0.999999 with offset support_function( x &gt;= 0 &amp; SLACK2 &lt;= 0.0999999 &amp; SLACK2 &gt;= 0 &amp; SLACK4 &lt;= 0.199999 &amp; SLACK4 &gt;= 0, mapped by x&apos; == 0 &amp; v&apos; == -SLACK2+0.0499999 ) </flow>
+</location>
+<transition source="1" target="1">
+   <label>hop</label>
+   <guard> x == 0 &amp; v &lt; 0 </guard>
+   <assignment> x&apos; == x &amp; v&apos; == -0.75*v with offset support_function( w2 &gt;= -0.0999999 &amp; w2 &lt;= 0.0999999, mapped by x&apos; == 0 &amp; v&apos; == w2 ) </assignment>
+</transition>
+</component>
+</sspaceex>
