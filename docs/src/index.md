@@ -35,7 +35,7 @@ However, note that the flattening process change the original model and may indu
 
 The aforementioned problems would yield errors/warnings when parsed.
 
-```@contents
+```
 1. ERROR | in component 'osc_w_4th_order' the string 'osc.osci.hop'  
 doesn't match NAME pattern [a-zA-Z_][a-zA-Z0-9_]* >>> element 
 label removed 
