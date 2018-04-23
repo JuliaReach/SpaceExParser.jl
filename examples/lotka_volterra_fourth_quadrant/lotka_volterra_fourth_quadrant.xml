@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<sspaceex xmlns="http://www-verimag.imag.fr/xml-namespaces/sspaceex" version="0.2" math="SpaceEx">
+<component id="lotka_volterra_fourth_quadrant">
+<param name="x" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+<param name="y" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+<location id="1" name="p">
+<invariant>x&gt;=0 &amp; y&gt;=0</invariant>
+<flow>x'==x*(1-y) &amp; y'==-((1-x)*y)</flow>
+</location>
+</component>
+</sspaceex>
