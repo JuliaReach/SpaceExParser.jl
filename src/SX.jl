@@ -14,7 +14,11 @@ include("io.jl")
 #=========================
 Parsing SX files
 ==========================#
-# for internal use
 include("parse.jl")
+
+#================================================
+Converting symbolic expressions and systems types
+=================================================#
+include("symbolic.jl")
 
 end # module

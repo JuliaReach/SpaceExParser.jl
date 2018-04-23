@@ -1,24 +1,41 @@
 """
-    readsxmodel(file; kwargs...)
+    readsxmodel(file; raw=false, ST=ConstrainedLinearControlContinuousSystem, kwargs...)
 
-Read a SX model file, returning a `HybridSystem`.
+Read a SX model file.
 
 ### Input
 
-- `file` -- the filename of the SX file (XML format)
+- `file` -- the filename of the SX file (in XML format)
+- `raw`  -- (optional, default: `false`) if `true`, return the raw expressions
+            that define the model, without actually computing the `HybridSystem`;
+            otherwise, instantiate a `HybridSystem` with the given assumptions
+- `ST`   -- (optional, default: `ConstrainedLinearControlContinuousSystem`) assumption
+            for the type of mathematical system for each mode
 
 ### Output
 
-A hybrid system that corresponds to the given SX model.
+Hybrid system that corresponds to the given SX model if `raw=false`; otherwise,
+a dictionary with the Julia expressio objects that define the model. The keys
+of this dictionary are:
+
+- `variables`
+- `automaton`
+- `invariants`
+- `flows`
+- ``
 
 ### Notes
 
-Currently the following running assumptions are made:
+Currently this function makes the following running assumptions:
 
-1) The model contains only 1 component. Recall that network components can be
-   flattened with `sspaceex`.
-2) Each flow has linear affine dynamics.
-3) `<notes> ... <\notes>` are ignored (see code comments).
+1) The model contains only 1 component. If your model contains more than one
+   component, recall that network components can be flattened using `sspaceex`.
+
+Moreover:
+
+1) The tags `<notes> ... <\notes>` are ignored.
+2) The transition labels and symbolic variables are stored in the extension field
+   (`ext`) of the output hybrid system.
 
 ### Algorithm
 
@@ -71,6 +88,9 @@ function readsxmodel(file; ST=ConstrainedLinearControlContinuousSystem, kwargs..
     # edge label, it is set to be arbitrarily 1 for all edges
     σ = 1
 
+    # outsource to:
+    #parse_sxmodel!(root_sxmodel, automaton, variables, transitionlabels, invariants, flows, resetmaps, switchings)
+
     for component in eachelement(root_sxmodel)
         for field in eachelement(component)
             if nodename(field) == "param"
@@ -96,8 +116,14 @@ function readsxmodel(file; ST=ConstrainedLinearControlContinuousSystem, kwargs..
         end
     end
 
-    # (2) Create the Hybrid system with the given assumptions
-    # =======================================================
+    # (2) Return or create the Hybrid System with the given assumptions
+    # =================================================================
+    if raw
+        return Dict("automaton"=>automaton,
+                    "variables"=>variables,
+                    "transitionlabels"=>transitionlabels,
+                    )
+    end
 
     # if the modes have invariants, they are defined as constraints (either state or
     # input constraints) of the system
