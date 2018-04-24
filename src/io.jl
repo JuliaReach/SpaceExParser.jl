@@ -1,51 +1,72 @@
 """
-    readsxmodel(file; raw=false, ST=ConstrainedLinearControlContinuousSystem, kwargs...)
+    readsxmodel(file; raw_dict=false, ST=ConstrainedLinearControlContinuousSystem, kwargs...)
 
 Read a SX model file.
 
 ### Input
 
-- `file` -- the filename of the SX file (in XML format)
-- `raw`  -- (optional, default: `false`) if `true`, return the raw expressions
-            that define the model, without actually computing the `HybridSystem`;
-            otherwise, instantiate a `HybridSystem` with the given assumptions
-- `ST`   -- (optional, default: `ConstrainedLinearControlContinuousSystem`) assumption
-            for the type of mathematical system for each mode
+- `file`      -- the filename of the SX file (in XML format)
+- `raw_dict`  -- (optional, default: `false`) if `true`, return the raw dictionary with
+                 the objects that define the model (see Output below), without
+                 actually computing the `HybridSystem`; otherwise, instantiate a
+                 `HybridSystem` with the given assumptions
+- `ST`        -- (optional, default: `ConstrainedLinearControlContinuousSystem`) assumption
+                 for the type of mathematical system for each mode
+- `N`         -- (optional, default: `Float64`) numeric type of the system's coefficients
 
 ### Output
 
-Hybrid system that corresponds to the given SX model if `raw=false`; otherwise,
+Hybrid system that corresponds to the given SX model if `raw_dict=false`; otherwise,
 a dictionary with the Julia expressio objects that define the model. The keys
 of this dictionary are:
 
-- `variables`
 - `automaton`
+- `variables`
+- `transitionlabels`
 - `invariants`
 - `flows`
-- ``
+- `resetmaps`
+- `switchings`
 
 ### Notes
 
-Currently this function makes the following running assumptions:
+This function makes the following assumptions:
 
-1) The model contains only 1 component. If your model contains more than one
-   component, recall that network components can be flattened using `sspaceex`.
+1) The model contains only 1 component. If the model contains more than 1 component,
+   an error is raised. If your model contains more than one component, recall that
+   network components can be flattened using `sspaceex`.
+2) Location identifications ("id" field) are integers.
+3) The default and a custom `ST` parameter assume that all modes are of the same
+   type. In general, you may pass a vector of system's types in `kwargs`.
 
-Moreover:
+Moreover, let us note that:
 
 1) The tags `<notes> ... <\notes>` are ignored.
-2) The transition labels and symbolic variables are stored in the extension field
-   (`ext`) of the output hybrid system.
+2) Variable names are stored in the dictionary `variables`, together with other
+   information such as if the variable is controlled or not. This dictionary is
+   then stored in the extension field (`ext`) of the hybrid system.
+3) The transition labels are stored in the extension field (`ext`) of the
+   hybrid system.
+4) We use the location "id" field (an integer), such that each of the vectors `modes`,
+   `resetmaps` and `switchings` corresponds to the location with the given "id". For
+   example, `modes[1]` corresponds to the mode for the location with `id="1"`.
+5) The `name` field of a location is ignored.
 
-### Algorithm
+These comments apply whenever `raw_dict=false`:
 
-We use the location "id" field, an integer, such that each of the vectors `modes`,
-`resetmaps` and `switchings` corresponds to the location with the given "id". For
-example, `modes[1]` corresponds to the modes of the location with `id="1"`.
+1) The `variables` is an ordered dictionary, where the ordered is given by the
+   insertion order. This allows deterministic iteration over the dictionary,
+   (notice that in a usual dictionary, the order in which the elements are returned
+   does not correspond, in general, to the order in which the symbols where saved).
+   The `variables` are stored in the coefficients matrix using this insertion order.
 """
-function readsxmodel(file; ST=ConstrainedLinearControlContinuousSystem, kwargs...)
+function readsxmodel(file; raw_dict=false,
+                           ST=ConstrainedLinearControlContinuousSystem,
+                           N=Float64,
+                           kwargs...)
 
-    # open XML
+    # 1) Open XML and read number of components and locations
+    # =======================================================
     sxmodel = readxml(file)
     root_sxmodel = root(sxmodel)
 
@@ -54,24 +75,21 @@ function readsxmodel(file; ST=ConstrainedLinearControlContinuousSystem, kwargs..
     if ncomponents > 1
         error("read $(ncomponents) components, but models with more than one component are not yet implemented; try flattening the model")
     elseif ncomponents < 1
-        error("read $(ncomponents) components, the model should have a positive number of components")
+        error("read $(ncomponents) components, but the model should have a positive number of components")
     end
-    nlocations = lcount[1]
-    ntransitions = tcount[1]
+    nlocations, ntransitions = lcount[1], tcount[1]
 
-    # instantiate hybrid automaton with the given number of locations
+    # 2) Parse SX model and make the dictionary of Julia expressions
+    # ==============================================================
+
+    # hybrid automaton with the given number of locations
     automaton = LightAutomaton(nlocations)
 
-    # set of variables names (use Basic for SymEngine variables)
-    # the order corresponds to the order in which they are read in the XML file
-    #variables = Dict{Symbol, typeof(Dict{String, Any}())}()
-    variables = Dict{Symbol, Any}()
+    # ditionary with variables names and their properties
+    variables = DataStructures.OrderedDict{Symbol, Dict{String, Any}}()
 
-    # set labels for the transitions
+    # set of labels for the transitions
     transitionlabels = Set{String}()
-
-    # (1) Parse the SX model
-    # ======================
 
     # vector with the invariants for each location
     invariants = Vector{Vector{Expr}}(nlocations)
@@ -85,51 +103,28 @@ function readsxmodel(file; ST=ConstrainedLinearControlContinuousSystem, kwargs..
     # guards for each transition (lists of inequalities)
     switchings = Vector{Vector{Expr}}(ntransitions)
 
-    # edge label, it is set to be arbitrarily 1 for all edges
-    σ = 1
+    HDict = Dict("automaton"=>automaton,
+                 "variables"=>variables,
+                 "transitionlabels"=>transitionlabels,
+                 "invariants"=>invariants,
+                 "flows"=>flows,
+                 "resetmaps"=>resetmaps,
+                 "switchings"=>switchings)
 
-    # outsource to:
-    #parse_sxmodel!(root_sxmodel, automaton, variables, transitionlabels, invariants, flows, resetmaps, switchings)
+    parse_sxmodel!(root_sxmodel, HDict)
 
-    for component in eachelement(root_sxmodel)
-        for field in eachelement(component)
-            if nodename(field) == "param"
-                if field["type"] == "real"
-                    add_variable!(variables, field)
-                elseif field["type"] == "label"
-                    add_transition_label!(transitionlabels, field)
-                else
-                    error("param type unknown")
-                end
-            elseif nodename(field) == "location"
-                (I, f) = parse_location(field)
-                push!(invariants, I)
-                push!(flows, f)
-            elseif nodename(field) == "transition"
-                (q, r, guard, assignment) = parse_transition(field)
-                add_transition!(automaton, q, r, σ)
-                push!(switchings, guard)
-                push!(resetmaps, assignment)
-            else
-                error("node $(nodename(field)) unknown")
-            end
-        end
+    # 2) Return or create a hybrid system with the given assumptions
+    # ==============================================================
+    if raw_dict
+        return HDict
     end
 
-    # (2) Return or create the Hybrid System with the given assumptions
-    # =================================================================
-    if raw
-        return Dict("automaton"=>automaton,
-                    "variables"=>variables,
-                    "transitionlabels"=>transitionlabels,
-                    )
-    end
+   (state_variables, input_variables, modes, resetmaps, switchings) = to_symbolic(HDict, nlocations, ST, N, kwargs...)
 
-    # if the modes have invariants, they are defined as constraints (either state or
-    # input constraints) of the system
-    modes = Vector{ST}(nlocations)
+    # extension field
+    ext = Dict{Symbol, Any}(:state_variables=>state_variables,
+                            :input_variables=>input_variables,
+                            :transitionlabels=>transitionlabels)
 
-    #add_location!(modes, variables, I, f)
-
-    return HybridSystem(automaton, modes, resetmaps, switchings, variables)
+    return HybridSystem(automaton, modes, resetmaps, switchings, ext)
 end

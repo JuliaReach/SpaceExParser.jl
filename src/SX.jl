@@ -2,6 +2,7 @@ __precompile__(true)
 
 module SX
 
+import DataStructures
 using EzXML, Reexport
 @reexport using HybridSystems, Systems, SymEngine
 
