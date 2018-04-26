@@ -1,5 +1,5 @@
 """
-    readsxmodel(file; raw_dict=false, ST=ConstrainedLinearControlContinuousSystem, kwargs...)
+    readsxmodel(file; raw_dict=false, ST=ConstrainedLinearControlContinuousSystem, N=Float64, kwargs...)
 
 Read a SX model file.
 
@@ -10,15 +10,15 @@ Read a SX model file.
                  the objects that define the model (see Output below), without
                  actually computing the `HybridSystem`; otherwise, instantiate a
                  `HybridSystem` with the given assumptions
-- `ST`        -- (optional, default: `ConstrainedLinearControlContinuousSystem`) assumption
+- `ST`        -- (optional, default: `nothing`) assumption
                  for the type of mathematical system for each mode
 - `N`         -- (optional, default: `Float64`) numeric type of the system's coefficients
 
 ### Output
 
-Hybrid system that corresponds to the given SX model if `raw_dict=false`; otherwise,
-a dictionary with the Julia expressio objects that define the model. The keys
-of this dictionary are:
+Hybrid system that corresponds to the given SX model and the given assumptions
+on the system type. If `raw_dict=true`; otherwise, a dictionary with the Julia
+expression objects that define the model. The keys of this dictionary are:
 
 - `automaton`
 - `variables`
@@ -36,8 +36,8 @@ This function makes the following assumptions:
    an error is raised. If your model contains more than one component, recall that
    network components can be flattened using `sspaceex`.
 2) Location identifications ("id" field) are integers.
-3) The default and a custom `ST` parameter assume that all modes are of the same
-   type. In general, you may pass a vector of system's types in `kwargs`.
+4) The default and a custom `ST` parameter assume that all modes are of the same
+   type. In general, you may pass a vector of system's types in `kwargs` (not implemented).
 
 Moreover, let us note that:
 
@@ -59,9 +59,11 @@ These comments apply whenever `raw_dict=false`:
    (notice that in a usual dictionary, the order in which the elements are returned
    does not correspond, in general, to the order in which the symbols where saved).
    The `variables` are stored in the coefficients matrix using this insertion order.
+2) If `ST` is `nothing`, the modes are given as the vector of tuples `(flows, invariants)`,
+   each component being a list of expressions.
 """
 function readsxmodel(file; raw_dict=false,
-                           ST=ConstrainedLinearControlContinuousSystem,
+                           ST=nothing,
                            N=Float64,
                            kwargs...)
 
@@ -109,17 +111,30 @@ function readsxmodel(file; raw_dict=false,
                  "invariants"=>invariants,
                  "flows"=>flows,
                  "resetmaps"=>resetmaps,
-                 "switchings"=>switchings)
+                 "switchings"=>switchings,
+                 "nlocations"=>nlocations,
+                 "ntransitions"=>ntransitions)
 
     parse_sxmodel!(root_sxmodel, HDict)
 
-    # 2) Return or create a hybrid system with the given assumptions
-    # ==============================================================
     if raw_dict
         return HDict
+    elseif ST == nothing
+        modes = [(flows[i], invariants[i]) for i in 1:nlocations]
+        # extension field
+        ext = Dict{Symbol, Any}(:variables=>variables,
+                                :transitionlabels=>transitionlabels)
+        return HybridSystem(automaton, modes, resetmaps, switchings, ext)
     end
 
-   (state_variables, input_variables, modes, resetmaps, switchings) = to_symbolic(HDict, nlocations, ST, N, kwargs...)
+    # 2) Use a custom system type and symbolic representations
+    # =======================================================
+    if ST == ConstrainedLinearControlContinuousSystem
+        #(state_variables, input_variables, modes, resetmaps, switchings) = linearHS(HDict; N=N, kwargs...)
+        error("`linearHS` with system type $(ST) is not yet implemented")
+    else
+        error("the system type $(ST) is not supported")
+    end
 
     # extension field
     ext = Dict{Symbol, Any}(:state_variables=>state_variables,
