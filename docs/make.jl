@@ -8,6 +8,7 @@ makedocs(
     sitename = "SX.jl",
     pages = [
         "Home" => "index.md",
+        "Examples" => "examples/examples.md",
         "Library" => Any[
         "Types" => "lib/types.md",
         "Methods" => "lib/methods.md"],
