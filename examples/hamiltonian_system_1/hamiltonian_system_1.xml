@@ -4,7 +4,6 @@
 <param name="x" type="real" local="false" d1="1" d2="1" dynamics="any"/>
 <param name="y" type="real" local="false" d1="1" d2="1" dynamics="any"/>
 <location id="1" name="p">
-<invariant>true</invariant>
 <flow>x'==-2*y &amp; y'==-2*x-3*x^2</flow>
 </location>
 </component>
