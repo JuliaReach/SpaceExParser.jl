@@ -34,3 +34,14 @@ end
     @test flow == [:(x' = x * (1 - y)), :(y' = -((1 - x) * y))]
     @test invariant == [:(x >= 0), :(y >= 0)]
 end
+
+#=
+@testset "Circle" begin
+    H = readsxmodel("../examples/circle/circle_flattened.xml")
+    @test nmodes(H) == 2
+    @test ntransitions(H) == 2
+    t = first(transitions(H))
+    source(H, t) == 1
+    target(H, t) == 2
+end
+=#
