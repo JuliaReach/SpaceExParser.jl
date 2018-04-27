@@ -1,4 +1,9 @@
-## Examples
+## Introduction
+
+```@contents
+Pages = ["examples.md"]
+Depth = 3
+```
 
 The folder `/examples` contains a collection of model files that are available from different
 sources:

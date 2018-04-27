@@ -10,7 +10,7 @@ DocTestFilters = [r"[0-9\.]+ seconds \(.*\)"]
 The SpaceEx modeling language (SX) is a format for the mathematical description
 of hybrid dynamical systems. It has been described in
 [The SpaceEx Modeling Language](http://spaceex.imag.fr/sites/default/files/spaceex_modeling_language_0.pdf),
-Scott Cotton, Goran Frehse, Olivier Lebeltel. See also [An Introduction to SpaceEx](spaceex.imag.fr/sites/default/files/introduction_to_spaceex_0.pdf),
+Scott Cotton, Goran Frehse, Olivier Lebeltel. See also [An Introduction to SpaceEx](http://spaceex.imag.fr/sites/default/files/introduction_to_spaceex_0.pdf),
 Goran Frehse, 2010.
 
 A visual model editor is available for download in the [SpaceEx website](http://spaceex.imag.fr/download-6).
