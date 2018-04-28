@@ -35,13 +35,28 @@ end
     @test invariant == [:(x >= 0), :(y >= 0)]
 end
 
-#=
 @testset "Circle" begin
     H = readsxmodel("../examples/circle/circle_flattened.xml")
     @test nmodes(H) == 2
     @test ntransitions(H) == 2
-    t = first(transitions(H))
-    source(H, t) == 1
-    target(H, t) == 2
+    for (i, ti) in enumerate(transitions(H))
+        if i == 1
+            @test source(H, ti) == 1 && target(H, ti) == 2
+        elseif i == 2
+            @test source(H, ti) == 2 && target(H, ti) == 1
+        end
+    end
+
+    m = H.modes[1]
+    flow, invariant = m[1], m[2]
+    @test flow == [:(x' = -y), :(y' = x)] && invariant == [:(y >= 0)]
+    m = H.modes[2]
+    flow, invariant = m[1], m[2]
+    @test flow == [:(x' = -y), :(y' = x)] && invariant == [:(y <= 0)]
+
+    # guards
+    @test H.switchings == [[:(y = 0)], [:(y >= 0)]]
+
+    # assignments
+    @test H.resetmaps == [[:(x' = x), :(y' = y)], [:(x' = x), :(y' = y)]]
 end
-=#
