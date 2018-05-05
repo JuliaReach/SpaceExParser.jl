@@ -10,7 +10,7 @@ Returns the number of locations and transitions for each component.
 ### Output
 
 Two vectors of integers `(lcount, tcount)`, where the i-th entry of `lcount` and
-`tcount` are number of locations and transitions, respectively, of the i-th component.
+`tcount` are the number of locations and transitions, respectively, of the i-th component.
 """
 function count_locations_and_transitions(root_sxmodel)
     lcount = Vector{Int}() # num locations for each component
@@ -36,13 +36,14 @@ function count_locations_and_transitions(root_sxmodel)
 end
 
 """
-    parse_sxmath(s)
+    parse_sxmath(s; assignment=false)
 
 Returns the list of expressions corresponding to a given SX string.
 
 ### Input
 
-- `s` - string
+- `s`          -- string
+- `assignment` -- (optional, default: `false`)
 
 ### Output
 
@@ -68,16 +69,53 @@ julia> parse_sxmath("x == 0 & v <= 0")
  :(v <= 0)
 ```
 
+Parentheses are ignored:
+
+```jldoctest
+julia> parse_sxmath("(x == 0) & (v <= 0)")
+2-element Array{Expr,1}:
+ :(x = 0)
+ :(v <= 0)
+```
+
+Splitting is also performend over double ampersand symbols:
+
+```jldoctest
+julia> parse_sxmath("x == 0 && v <= 0")
+2-element Array{Expr,1}:
+ :(x = 0)
+ :(v <= 0)
+```
+
+If you want to parse an assignment, use the `assignment` flag:
+
+```jldoctest
+julia> parse_sxmath("x := -x*0.1", assignment=true)
+1-element Array{Expr,1}:
+ :(x = -x * 0.1)
+ ```
+
 ### Algorithm
 
 Consists of the following steps (in the given order):
 
-- split the string with the `&` key
+- split the string with the `&` key, or `&&`
 - remove trailing whitespace of each substring
 - replace double `==` with single `=`
 - cast to a Julia expression with `parse`
+
+For assignments, the nomenclature `:=` is also valid and here it is replaced
+to `=`, but you need to set `assignment=true` for this replacement to take effect.
 """
-parse_sxmath(s) = parse.(replace.(strip.(split(s, "&")), "==", "="))
+function parse_sxmath(s; assignment=false)
+    expr = split(replace(s, "&&", "&"), "&")
+    expr = strip.(expr)
+    if assignment
+        expr = replace.(expr, ":=", "=")
+    end
+    expr = replace.(expr, "==", "=")
+    return parse.(expr)
+end
 
 """
     parse_sxmodel!(root_sxmodel, HDict)

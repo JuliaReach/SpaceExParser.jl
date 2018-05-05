@@ -13,7 +13,7 @@ of hybrid dynamical systems. It has been described in
 Scott Cotton, Goran Frehse, Olivier Lebeltel. See also [An Introduction to SpaceEx](http://spaceex.imag.fr/sites/default/files/introduction_to_spaceex_0.pdf),
 Goran Frehse, 2010.
 
-A visual model editor is available for download in the [SpaceEx website](http://spaceex.imag.fr/download-6).
+A visual model editor is available for download on the [SpaceEx website](http://spaceex.imag.fr/download-6).
 See the examples in this documentation for screenshots and further details.
 
 The aim of this library is to read SX modeling files and transform them into Julia

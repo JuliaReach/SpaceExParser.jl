@@ -2,7 +2,7 @@ __precompile__(true)
 
 module SX
 
-import DataStructures
+import DataStructures, FillArrays
 using EzXML, Reexport
 @reexport using HybridSystems, Systems, SymEngine
 
