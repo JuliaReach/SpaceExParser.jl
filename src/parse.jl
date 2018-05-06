@@ -245,8 +245,9 @@ end
 ### Output
 
 The tuple `(id, I, f)` where `id` is the integer that identifies the location,
-`I` is the list of invariants for this location, and `f` is the list of ODEs that
-define the flow. Both objects are vectors of symbolic expressions `Expr`.
+`I` is the list of subexpressions that determine that invariant for this location,
+and similarly `f` is the list of ODEs that define the flow for this location.
+Both objects are vectors of symbolic expressions `Expr`.
 """
 function parse_location(field)
     id = parse(Int, field["id"])
@@ -273,8 +274,8 @@ end
 ### Output
 
 The tuple `(q, r, G, A)` where `q` and `r` are the source mode and target mode
-respectively for this location, `G` is the list of guards for this location,
-and `A` is the list of assignments. Both objects are vectors of
+respectively for this transition, `G` is the list of guards for this transition,
+and `A` is the list of assignments. `G` and `A` are vectors of
 symbolic expressions `Expr`.
 
 ### Notes
