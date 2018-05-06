@@ -1,3 +1,7 @@
 julia 0.6
 EzXML
 HybridSystems
+SymEngine
+DataStructures
+Reexport
+FillArrays

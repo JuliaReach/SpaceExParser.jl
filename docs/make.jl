@@ -8,9 +8,8 @@ makedocs(
     sitename = "SX.jl",
     pages = [
         "Home" => "index.md",
-        "Library" => Any[
-        "Types" => "lib/types.md",
-        "Methods" => "lib/methods.md"],
+        "Examples" => Any["Introduction" => "examples/examples.md", "Bouncing ball" => "examples/bball.md"],
+        "Library" => Any["Types" => "lib/types.md", "Methods" => "lib/methods.md"],
         "About" => "about.md"
     ]
 )

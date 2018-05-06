@@ -13,3 +13,21 @@ DocTestSetup = quote
     using SX
 end
 ```
+
+### Input/Output
+
+```@docs
+readsxmodel
+```
+
+### Parsing the SX language
+
+```@docs
+SX.count_locations_and_transitions
+SX.parse_sxmath
+SX.parse_sxmodel!
+SX.add_variable!
+SX.add_transition_label!
+SX.parse_location
+SX.parse_transition
+```
