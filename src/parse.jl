@@ -17,7 +17,6 @@ function count_locations_and_transitions(root_sxmodel)
     tcount = Vector{Int}() # num transitions for each component
     id_component = 0 # index of the current component
 
-    # count the number of locations for each component
     for component in eachelement(root_sxmodel)
         if nodename(component) == "component"
             id_component += 1
@@ -28,6 +27,8 @@ function count_locations_and_transitions(root_sxmodel)
                     lcount[id_component] += 1
                 elseif nodename(field) == "transition"
                     tcount[id_component] += 1
+                else
+                    warn("field $(nodename(field)) is ignored")
                 end
             end
         end
@@ -122,8 +123,10 @@ end
 
 ### Input
 
-- `HDict` - dictionary that wraps the hybrid model and contains the keys `(automaton,
-            variables, transitionlabels, invariants, flows, resetmaps, switchings)`
+- `root_sxmodel` -- root element of an XML document
+- `HDict`        -- dictionary that wraps the hybrid model and contains the keys
+                    `(automaton, variables, transitionlabels, invariants, flows,
+                    assignments, guards, switchings, nlocations, ntransitions)`
 
 ### Output
 
@@ -131,7 +134,10 @@ The `HDict` dictionary.
 
 ### Notes
 
-Edge labels are not used and their symbol is (arbitrarily) set to the integer 1.
+1) Edge labels are not used and their symbol is (arbitrarily) set to the integer 1.
+2) Location identifications ("id" field) are assumed to be integers.
+3) The switchings types are assumed to be autonomous. See Switching in Systems
+   and Control, D. Liberzon, for further details on the classification of switchings.
 """
 function parse_sxmodel!(root_sxmodel, HDict)
 
@@ -163,8 +169,9 @@ function parse_sxmodel!(root_sxmodel, HDict)
                 id_transition += 1
                 (q, r, guard, assignment) = parse_transition(field)
                 add_transition!(HDict["automaton"], q, r, σ)
-                HDict["switchings"][id_transition] = guard
-                HDict["resetmaps"][id_transition] = assignment
+                HDict["switchings"][id_transition] = AutonomousSwitching()
+                HDict["assignments"][id_transition] = assignment
+                HDict["guards"][id_transition] = guard
             else
                 error("node $(nodename(field)) unknown")
             end

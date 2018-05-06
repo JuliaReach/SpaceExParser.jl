@@ -25,18 +25,20 @@ expression objects that define the model. The keys of this dictionary are:
 - `transitionlabels`
 - `invariants`
 - `flows`
-- `resetmaps`
+- `assignments`
+- `guards`
 - `switchings`
+- `nlocations`
+- `ntransitions`
 
 ### Notes
 
-This function makes the following assumptions:
+Currently, this function makes the following assumptions:
 
 1) The model contains only 1 component. If the model contains more than 1 component,
    an error is raised. In this case, recall that network components can be
    flattened using `sspaceex`.
-2) Location identifications ("id" field) are integers.
-4) The default and a custom `ST` parameter assume that all modes are of the same
+2) The default and a custom `ST` parameter assume that all modes are of the same
    type. In general, you may pass a vector of system's types in `kwargs` (not implemented).
 
 Moreover, let us note that:
@@ -51,8 +53,10 @@ Moreover, let us note that:
    `resetmaps` and `switchings` corresponds to the location with the given "id". For
    example, `modes[1]` corresponds to the mode for the location with `id="1"`.
 5) The `name` field of a location is ignored.
-6) The nature of the switchings is autonomous: if there are guards, these define
+6) The nature of the switchings is autonomous. If there are guards, these define
    state-dependent switchings only. Switching control functions are not yet implemented.
+7) The `resetmaps` field consists of the vector of tuples `(assignment, guard)`, for each
+   location.
 
 These comments apply whenever `raw_dict=false`:
 
@@ -74,15 +78,15 @@ function readsxmodel(file; raw_dict=false,
     sxmodel = readxml(file)
     root_sxmodel = root(sxmodel)
 
-    nlocations_in_components, ntransitions_in_components = count_locations_and_transitions(root_sxmodel)
-    ncomponents = length(nlocations_in_components)
+    nlocations_vector, ntransitions_vector = count_locations_and_transitions(root_sxmodel)
+    ncomponents = length(nlocations_vector)
     if ncomponents > 1
         error("read $(ncomponents) components, but models with more than one component are not yet implemented; try flattening the model")
     elseif ncomponents < 1
         error("read $(ncomponents) components, but the model should have a positive number of components")
     end
     # keep the 1st component
-    nlocations, ntransitions = nlocations_in_components[1], ntransitions_in_components[1]
+    nlocations, ntransitions = nlocations_vector[1], ntransitions_vector[1]
 
     # 2) Parse SX model and make the dictionary of Julia expressions
     # ==============================================================
@@ -102,18 +106,22 @@ function readsxmodel(file; raw_dict=false,
     # vector with the ODE flow for each location
     flows = Vector{Vector{Expr}}(nlocations)
 
-    # assignments for each transition (equations)
-    # guards for each transition (lists of inequalities)
-    resetmaps = Vector{Vector{Expr}}(ntransitions)
+    # assignments for each transition
+    assignments = Vector{Vector{Expr}}(ntransitions)
 
-    switchings = FillArrays.Fill(AutonomousSwitching(), ntransitions)
+    # guards for each transition; subsets of state space where the state needs
+    # to be to make the transition
+    guards = Vector{Vector{Expr}}(ntransitions)
+
+    switchings = Vector{AbstractSwitching}(ntransitions)
 
     HDict = Dict("automaton"=>automaton,
                  "variables"=>variables,
                  "transitionlabels"=>transitionlabels,
                  "invariants"=>invariants,
                  "flows"=>flows,
-                 "resetmaps"=>resetmaps,
+                 "assignments"=>assignments,
+                 "guards"=>guards,
                  "switchings"=>switchings,
                  "nlocations"=>nlocations,
                  "ntransitions"=>ntransitions)
@@ -123,10 +131,21 @@ function readsxmodel(file; raw_dict=false,
     if raw_dict
         return HDict
     elseif ST == nothing
-        modes = [(flows[i], invariants[i]) for i in 1:nlocations]
+
+        modes = Vector{Tuple{Vector{Expr}, Vector{Expr}}}()
+        for i in eachindex(flows)
+           push!(modes, (flows[i], invariants[i]))
+        end
+
+        resetmaps = Vector{Tuple{Vector{Expr}, Vector{Expr}}}()
+        for i in eachindex(assignments)
+           push!(resetmaps, (assignments[i], guards[i]))
+        end
+
         # extension field
         ext = Dict{Symbol, Any}(:variables=>variables,
                                 :transitionlabels=>transitionlabels)
+
         return HybridSystem(automaton, modes, resetmaps, switchings, ext)
     end
 
