@@ -27,8 +27,6 @@ function count_locations_and_transitions(root_sxmodel)
                     lcount[id_component] += 1
                 elseif nodename(field) == "transition"
                     tcount[id_component] += 1
-                else
-                    warn("field $(nodename(field)) is ignored")
                 end
             end
         end
@@ -138,6 +136,10 @@ The `HDict` dictionary.
 2) Location identifications ("id" field) are assumed to be integers.
 3) The switchings types are assumed to be autonomous. See Switching in Systems
    and Control, D. Liberzon, for further details on the classification of switchings.
+4) We add fresh varaibles for each component (`id_variable += 1`). In general
+   variables can be shared among components if the bindings are defined. Currently,
+   we make the simplifying assumption that the model has only one component and
+   we don't take bindings into account.
 """
 function parse_sxmodel!(root_sxmodel, HDict)
 
@@ -159,7 +161,7 @@ function parse_sxmodel!(root_sxmodel, HDict)
                 elseif field["type"] == "label"
                     add_transition_label!(HDict["transitionlabels"], field)
                 else
-                    error("param type unknown")
+                    error("param type $(field["type"]) unknown")
                 end
             elseif nodename(field) == "location"
                 (id_location, i, f) = parse_location(field)
@@ -186,7 +188,7 @@ end
 ### Input
 
 - `variables` -- vector of symbolic variables
-- `field`     -- node with a `param` variable field
+- `field`     -- an `EzXML.Node` node with containing information about a `param` field
 - `id`        -- (optional, default: 1) integer that identifies the variable
 
 ### Output
@@ -226,10 +228,6 @@ end
 ### Output
 
 The updated vector of transition labels.
-
-### Notes
-
-Parameters can be either variable names (type "real") or labels (type "label").
 """
 function add_transition_label!(labels, field)
     @assert field["type"] == "label"
@@ -290,7 +288,7 @@ function parse_transition(field)
         if nodename(element) == "guard"
             G = parse_sxmath(nodecontent(element))
         elseif nodename(element) == "assignment"
-            A = parse_sxmath(nodecontent(element))
+            A = parse_sxmath(nodecontent(element), assignment=true)
         else
             warn("field $(nodename(element)) in transition $(field["source"]) → $(field["target"]) is ignored")
         end

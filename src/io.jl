@@ -66,7 +66,8 @@ These comments apply whenever `raw_dict=false`:
    does not correspond, in general, to the order in which the symbols were saved).
    The `variables` are stored in the coefficients matrix using this insertion order.
 2) If `ST` is `nothing`, the modes are given as the vector of tuples `(flows, invariants)`,
-   each component being a list of expressions.
+   each component being a list of expressions, and similarly the reset maps are
+   the vector of tuples `(assignments, guards)`.
 """
 function readsxmodel(file; raw_dict=false,
                            ST=nothing,
