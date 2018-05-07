@@ -131,8 +131,9 @@ function readsxmodel(file; raw_dict=false,
 
     if raw_dict
         return HDict
-    elseif ST == nothing
+    end
 
+    if ST == nothing
         modes = Vector{Tuple{Vector{Expr}, Vector{Expr}}}()
         for i in eachindex(flows)
            push!(modes, (flows[i], invariants[i]))
@@ -143,26 +144,17 @@ function readsxmodel(file; raw_dict=false,
            push!(resetmaps, (assignments[i], guards[i]))
         end
 
-        # extension field
-        ext = Dict{Symbol, Any}(:variables=>variables,
-                                :transitionlabels=>transitionlabels)
-
-        return HybridSystem(automaton, modes, resetmaps, switchings, ext)
-    end
-
-    # 2) Use a custom system type and symbolic representations
-    # =======================================================
-    if ST == ConstrainedLinearControlContinuousSystem
-        #(state_variables, input_variables, modes, resetmaps, switchings) = linearHS(HDict; N=N, kwargs...)
-        error("`linearHS` with system type $(ST) is not yet implemented")
+    elseif ST == ConstrainedLinearControlContinuousSystem
+        # 2) Use a custom system type and symbolic representations
+        (modes, resetmaps) = linearHS(HDict; N=N, kwargs...)
     else
         error("the system type $(ST) is not supported")
     end
 
     # extension field
-    ext = Dict{Symbol, Any}(:state_variables=>state_variables,
-                            :input_variables=>input_variables,
-                            :transitionlabels=>transitionlabels)
+    ext = Dict{Symbol, Any}()
+    ext[:variables] = variables
+    ext[:transitionlabels] = transitionlabels
 
     return HybridSystem(automaton, modes, resetmaps, switchings, ext)
 end
