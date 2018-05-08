@@ -284,7 +284,8 @@ It is assumed that the "source" and "target" fields can be cast to integers.
 """
 function parse_transition(field)
     q, r = parse(Int, field["source"]), parse(Int, field["target"])
-    local G, A
+    G = Vector{Expr}()
+    A = Vector{Expr}()
     for element in eachelement(field)
         if nodename(element) == "guard"
             G = parse_sxmath(nodecontent(element))
