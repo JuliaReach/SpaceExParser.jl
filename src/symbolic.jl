@@ -137,7 +137,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
                     a = convert(Vector{N}, a)
                     push!(X, Hyperplane(a, b))
                 elseif all(si in input_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, state_variables)
+                    a = diff.(LHS, input_variables)
                     a = convert(Vector{N}, a)
                     push!(U, Hyperplane(a, b))
                 else
@@ -155,7 +155,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
                     a = convert(Vector{N}, a)
                     push!(X, HalfSpace(-a, -b))
                 elseif all(si in input_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, state_variables)
+                    a = diff.(LHS, input_variables)
                     a = convert(Vector{N}, a)
                     push!(U, HalfSpace(-a, -b))
                 else
@@ -245,7 +245,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
                     a = convert(Vector{N}, a)
                     push!(Xr, Hyperplane(a, b))
                 elseif all(si in input_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, state_variables)
+                    a = diff.(LHS, input_variables)
                     a = convert(Vector{N}, a)
                     push!(Ur, Hyperplane(a, b))
                 else
@@ -263,7 +263,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
                     a = convert(Vector{N}, a)
                     push!(Xr, HalfSpace(-a, -b))
                 elseif all(si in input_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, state_variables)
+                    a = diff.(LHS, input_variables)
                     a = convert(Vector{N}, a)
                     push!(Ur, HalfSpace(-a, -b))
                 else
