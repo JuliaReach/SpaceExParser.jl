@@ -64,9 +64,6 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
     # vector of modes (flows, invariants)
     modes = Vector{ST}(nlocations)
 
-    # reset maps (assignments, guards) for each transition (equations)
-    resetmaps = Vector{STD}(ntransitions)
-
     for id_location in eachindex(flows)
 
         # vector of input sets; can be bigger if there are constant inputs
@@ -183,18 +180,21 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         modes[id_location] = ST(A, B, X, U)
     end
 
-    for id_location in eachindex(assignments)
+    # reset maps (assignments, guards) for each transition (equations)
+    resetmaps = Vector{STD}(ntransitions)
+
+    for id_transition in eachindex(assignments)
 
         # input constraints for the reset maps
         Ur = Vector{LazySet{N}}() # FIXME : use an intersection array
-        # should be a vector of vectors (one for each location)
+        # should be a vector of vectors (one for each transition)
 
         # state constraints for the reset maps
         Xr = Vector{LazySet{N}}() # FIXME : use an intersection array
-        # should be a vector of vectors (one for each location)
+        # should be a vector of vectors (one for each transition)
 
-        # dimension of the statespace for this location
-        n = length(assignments[id_location])
+        # dimension of the statespace for this transition
+        n = length(assignments[id_transition])
 
         # dynamics matrix
         Ar = Matrix{N}(n, n)
@@ -206,8 +206,8 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         # track if there are constant terms
         isaffine = false
 
-        # loop over each assignment equation for this location
-        for (i, ai) in enumerate(assignments[id_location])
+        # loop over each assignment equation for this transition
+        for (i, ai) in enumerate(assignments[id_transition])
 
             # we are treating an equality x_i' = f(x, ...)
             @assert ai.head == :(=)
@@ -231,7 +231,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         end
 
         # convert guards to set representations
-        for (i, gi) = enumerate(guards[id_location])
+        for (i, gi) = enumerate(guards[id_transition])
             if gi.head == :(=) # this is a hyperplane
                 LHS = convert(Basic, gi.args[1])
                 expr = gi.args[2]
@@ -291,7 +291,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
                     error("the guard $gi is not in the specified format")
                 end
             else
-                error("guard $(gi) in location $id_location not understood")
+                error("guard $(gi) in transition $id_transition not understood")
             end
         end
 
@@ -301,7 +301,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
             Ur = [Singleton([one(N)]) * Ui for Ui in Ur]
         end
 
-        resetmaps[id_location] = STD(Ar, Br, Xr, Ur)
+        resetmaps[id_transition] = STD(Ar, Br, Xr, Ur)
     end
 
 
