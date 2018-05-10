@@ -87,8 +87,10 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         B = Matrix{N}(n, m)
         C = zeros(N, n) # constant terms
 
-        # loop over each flow equation for this location
+        # track if there are constant terms
         isaffine = false
+
+        # loop over each flow equation for this location
         for (i, fi) in enumerate(flows[id_location])
 
             # we are treating an equality x_i' = f(x, ...)
@@ -110,13 +112,6 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
             # terms linear in the input variables
             ex = diff.(RHS, input_variables)
             B[i, :] = convert.(N, ex) # needs ex to be numeric, otherwise an error is prompted
-
-        end
-
-        # if needed, concatenate the inputs with the constant terms
-        if isaffine
-            B = hcat(B, C)
-            push!(U, Singleton([one(N)]))
         end
 
         # convert invariants to set representations
@@ -178,6 +173,13 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
                 error("invariant $(invi) in location $id_location not understood")
             end
         end
+
+        # if needed, concatenate the inputs with the constant terms
+        if isaffine
+            B = hcat(B, C)
+            U = [Singleton([one(N)]) * Ui for Ui in U]
+        end
+
         modes[id_location] = ST(A, B, X, U)
     end
 
@@ -201,6 +203,9 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         Br = Matrix{N}(n, m)
         Cr = zeros(N, n) # constant terms
 
+        # track if there are constant terms
+        isaffine = false
+
         # loop over each assignment equation for this location
         for (i, ai) in enumerate(assignments[id_location])
 
@@ -214,7 +219,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
             const_term = subs(RHS, [xi=>zero(N) for xi in state_variables]..., [ui=>zero(N) for ui in input_variables]...)
             if const_term != zero(N)
                 Cr[i] = const_term
-                push!(Ur, Singleton([one(N)]))
+                isaffine = true
             end
             # terms linear in the state variables
             ex = diff.(RHS, state_variables)
@@ -223,12 +228,6 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
             # terms linear in the input variables
             ex = diff.(RHS, input_variables)
             Br[i, :] = convert.(N, ex) # needs ex to be numeric, otherwise an error is prompted
-
-        end
-
-        # if needed, concatenate the inputs with the constant terms
-        if length(Ur) > length(input_variables)
-            Br = hcat(Br, Cr)
         end
 
         # convert guards to set representations
@@ -294,6 +293,12 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
             else
                 error("guard $(gi) in location $id_location not understood")
             end
+        end
+
+        # if needed, concatenate the inputs with the constant terms
+        if isaffine
+            Br = hcat(Br, Cr)
+            Ur = [Singleton([one(N)]) * Ui for Ui in Ur]
         end
 
         resetmaps[id_location] = STD(Ar, Br, Xr, Ur)
