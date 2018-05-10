@@ -18,7 +18,13 @@
 This package requires Julia v0.6 or later. Refer to the [official documentation](https://julialang.org/downloads)
 on how to install and run Julia in your system.
 
-To install this package, use the following command inside Julia's REPL:
+This package require [HybridSystems.jl](https://github.com/blegat/HybridSystems.jl). To install it, run
+
+```julia
+Pkg.clone("https://github.com/blegat/HybridSystems.jl.git")
+```
+
+To install the package SX, use the following command inside Julia's REPL:
 ```julia
 Pkg.clone("https://github.com/JuliaReach/SX.jl")
 ```
