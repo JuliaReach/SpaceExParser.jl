@@ -67,23 +67,16 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
     # reset maps (assignments, guards) for each transition (equations)
     resetmaps = Vector{STD}(ntransitions)
 
-    # vector of input sets; can be bigger if there are constant inputs
-    U = Vector{LazySet{N}}() # FIXME : use an intersection array?
-    # should be a vector of vectors (one for each location)
-
-    # vector of state constraints
-    X = Vector{LazySet{N}}() # FIXME : use an intersection array?
-    # should be a vector of vectors (one for each location)
-
-    # input constraints for the reset maps
-    Ur = Vector{LazySet{N}}() # FIXME : use an intersection array
-    # should be a vector of vectors (one for each location)
-
-    # state constraints for the reset maps
-    Xr = Vector{LazySet{N}}() # FIXME : use an intersection array
-    # should be a vector of vectors (one for each location)
-
     for id_location in eachindex(flows)
+
+        # vector of input sets; can be bigger if there are constant inputs
+        U = Vector{LazySet{N}}() # FIXME : use an intersection array?
+        # should be a vector of vectors (one for each location)
+
+        # vector of state constraints
+        X = Vector{LazySet{N}}() # FIXME : use an intersection array?
+        # should be a vector of vectors (one for each location)
+
         # dimension of the statespace for this location
         n = length(flows[id_location])
 
@@ -187,6 +180,15 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
     end
 
     for id_location in eachindex(assignments)
+
+        # input constraints for the reset maps
+        Ur = Vector{LazySet{N}}() # FIXME : use an intersection array
+        # should be a vector of vectors (one for each location)
+
+        # state constraints for the reset maps
+        Xr = Vector{LazySet{N}}() # FIXME : use an intersection array
+        # should be a vector of vectors (one for each location)
+
         # dimension of the statespace for this location
         n = length(assignments[id_location])
 
