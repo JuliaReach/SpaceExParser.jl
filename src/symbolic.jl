@@ -88,6 +88,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         C = zeros(N, n) # constant terms
 
         # loop over each flow equation for this location
+        isaffine = false
         for (i, fi) in enumerate(flows[id_location])
 
             # we are treating an equality x_i' = f(x, ...)
@@ -100,7 +101,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
             const_term = subs(RHS, [xi=>zero(N) for xi in state_variables]..., [ui=>zero(N) for ui in input_variables]...)
             if const_term != zero(N)
                 C[i] = const_term
-                push!(U, Singleton([one(N)]))
+                isaffine = true
             end
             # terms linear in the state variables
             ex = diff.(RHS, state_variables)
@@ -113,8 +114,9 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         end
 
         # if needed, concatenate the inputs with the constant terms
-        if length(U) > length(input_variables)
+        if isaffine
             B = hcat(B, C)
+            push!(U, Singleton([one(N)]))
         end
 
         # convert invariants to set representations
