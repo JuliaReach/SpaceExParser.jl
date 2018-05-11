@@ -4,7 +4,7 @@ module SX
 
 import DataStructures, FillArrays
 using EzXML, Reexport
-@reexport using HybridSystems, Systems, SymEngine
+@reexport using HybridSystems, MathematicalSystems, SymEngine
 
 #=========================
 Input/Output functions
