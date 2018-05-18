@@ -1,5 +1,3 @@
-using LazySets
-
 """
 linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
                 STD=ConstrainedLinearControlDiscreteSystem,
@@ -91,7 +89,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         for (i, fi) in enumerate(flows[id_location])
 
             # we are treating an equality x_i' = f(x, ...)
-            @assert fi.head == :(=)
+            @assert fi.head == :(=) "equality symbol expected in flow equation, found $(fi.head)"
 
             # fi.args[1] is the subject of the equation, and fi.args[2] the right-hand side
             RHS = convert(Basic, fi.args[2])
@@ -114,61 +112,23 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
 
         # convert invariants to set representations
         for (i, invi) = enumerate(invariants[id_location])
-            if invi.head == :(=) # this is a hyperplane
-                LHS = convert(Basic, invi.args[1])
-                RHS = convert(Basic, invi.args[2].args[2])
-
-                b = convert(N, RHS)
-                # find if this is a state constraint or an input constraint
-                if all(si in state_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, state_variables)
-                    a = convert(Vector{N}, a)
-                    push!(X, Hyperplane(a, b))
-                elseif all(si in input_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, input_variables)
-                    a = convert(Vector{N}, a)
-                    push!(U, Hyperplane(a, b))
-                else
-                    error("the invariant $(invi) is not in the specified format")
-                end
-
-            elseif invi.head == :call && (invi.args[1] == :(>=) || invi.args[1] == :(>)) # this is a halfspace ax >= b
-                LHS = convert(Basic, invi.args[2])
-                RHS = convert(Basic, invi.args[3])
-
-                b = convert(N, RHS)
-                # find if this is a state constraint or an input constraint
-                if all(si in state_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, state_variables)
-                    a = convert(Vector{N}, a)
-                    push!(X, HalfSpace(-a, -b))
-                elseif all(si in input_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, input_variables)
-                    a = convert(Vector{N}, a)
-                    push!(U, HalfSpace(-a, -b))
-                else
-                    error("the invariant $(invi) is not in the specified format")
-                end
-
-            elseif invi.head == :call && (invi.args[1] == :(<=) || invi.args[1] == :(<)) # this is a halfspace ax <= b
-                LHS = convert(Basic, invi.args[2])
-                RHS = convert(Basic, invi.args[3])
-
-                b = convert(N, RHS)
-                # find if this is a state constraint or an input constraint
-                if all(si in state_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, state_variables)
-                    a = convert(Vector{N}, a)
-                    push!(X, HalfSpace(a, b))
-                elseif all(si in input_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, input_variables)
-                    a = convert(Vector{N}, a)
-                    push!(U, HalfSpace(a, b))
-                else
-                    error("the invariant $invi is not in the specified format")
-                end
+            if is_hyperplane(invi)
+                set_type = Hyperplane{N}
+            elseif is_halfspace(invi)
+                set_type = HalfSpace{N}
             else
-                error("invariant $(invi) in location $id_location not understood")
+                error("invariant $(invi) in location $(id_location) is neither a hyperplane nor a halfspace, and conversion from this set is not implemented")
+            end
+
+            vars = free_symbols(invi, set_type)
+            if all(si in state_variables for si in vars)
+                h = convert(set_type, invi, vars=state_variables)
+                push!(X, h)
+            elseif all(si in input_variables for si in vars)
+                h = convert(set_type, invi, vars=input_variables)
+                push!(U, h)
+            else
+                error("invariant $(invi) in location $(id_location) contains a combination of state variables and input variables, and conversion to a system of type $(ST) is not possible")
             end
         end
 
@@ -237,66 +197,23 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
 
         # convert guards to set representations
         for (i, gi) = enumerate(guards[id_transition])
-            if gi.head == :(=) # this is a hyperplane
-                LHS = convert(Basic, gi.args[1])
-                expr = gi.args[2]
-                if :args in fieldnames(expr)
-                    RHS = convert(Basic, expr.args[2])
-                else
-                    RHS = convert(Basic, expr)
-                end
-
-                b = convert(N, RHS)
-                # find if this is a state constraint or an input constraint
-                if all(si in state_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, state_variables)
-                    a = convert(Vector{N}, a)
-                    push!(Xr, Hyperplane(a, b))
-                elseif all(si in input_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, input_variables)
-                    a = convert(Vector{N}, a)
-                    push!(Ur, Hyperplane(a, b))
-                else
-                    error("the guard $(gi) is not in the specified format")
-                end
-
-            elseif gi.head == :call && (gi.args[1] == :(>=) || gi.args[1] == :(>)) # this is a halfspace ax >= b
-                LHS = convert(Basic, gi.args[2])
-                RHS = convert(Basic, gi.args[3])
-
-                b = convert(N, RHS)
-                # find if this is a state constraint or an input constraint
-                if all(si in state_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, state_variables)
-                    a = convert(Vector{N}, a)
-                    push!(Xr, HalfSpace(-a, -b))
-                elseif all(si in input_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, input_variables)
-                    a = convert(Vector{N}, a)
-                    push!(Ur, HalfSpace(-a, -b))
-                else
-                    error("the guard $(gi) is not in the specified format")
-                end
-
-            elseif gi.head == :call && (gi.args[1] == :(<=) || gi.args[1] == :(<)) # this is a halfspace ax <= b
-                LHS = convert(Basic, gi.args[2])
-                RHS = convert(Basic, gi.args[3])
-
-                b = convert(N, RHS)
-                # find if this is a state constraint or an input constraint
-                if all(si in state_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, state_variables)
-                    a = convert(Vector{N}, a)
-                    push!(Xr, HalfSpace(a, b))
-                elseif all(si in input_variables for si in free_symbols(LHS))
-                    a = diff.(LHS, input_variables)
-                    a = convert(Vector{N}, a)
-                    push!(Ur, HalfSpace(a, b))
-                else
-                    error("the guard $gi is not in the specified format")
-                end
+            if is_hyperplane(gi)
+                set_type = Hyperplane{N}
+            elseif is_halfspace(gi)
+                set_type = HalfSpace{N}
             else
-                error("guard $(gi) in transition $id_transition not understood")
+                error("guard $(gi) in transition $(id_transition) is neither a hyperplane nor a halfspace, and conversion from this set is not implemented")
+            end
+
+            vars = free_symbols(gi, set_type)
+            if all(si in state_variables for si in vars)
+                h = convert(set_type, gi, vars=state_variables)
+                push!(Xr, h)
+            elseif all(si in input_variables for si in vars)
+                h = convert(set_type, gi, vars=input_variables)
+                push!(Ur, h)
+            else
+                error("guard $(gi) in transition $(id_transition) contains a combination of state variables and input variables, and conversion to a system of type $(ST) is not possible")
             end
         end
 
