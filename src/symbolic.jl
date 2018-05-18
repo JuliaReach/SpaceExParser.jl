@@ -174,7 +174,11 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         # if needed, concatenate the inputs with the constant terms
         if isaffine
             B = hcat(B, C)
-            U = [Singleton([one(N)]) * Ui for Ui in U]
+            if !isempty(U)
+                U = [Singleton([one(N)]) * Ui for Ui in U]
+            else
+                U = [Singleton([one(N)])]
+            end
         end
 
         modes[id_location] = ST(A, B, X, U)
@@ -298,7 +302,11 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         # if needed, concatenate the inputs with the constant terms
         if isaffine
             Br = hcat(Br, Cr)
-            Ur = [Singleton([one(N)]) * Ui for Ui in Ur]
+            if !isempty(Ur)
+                Ur = [Singleton([one(N)]) * Ui for Ui in Ur]
+            else
+                Ur = [Singleton([one(N)])]
+            end
         end
 
         resetmaps[id_transition] = STD(Ar, Br, Xr, Ur)
