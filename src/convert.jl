@@ -1,4 +1,5 @@
-import Base.convert, SymEngine.convert
+import Base.convert
+import SymEngine:convert, free_symbols
 
 """
    is_linearcombination(L::Basic)
@@ -158,5 +159,198 @@ function is_hyperplane(expr::Expr)::Bool
         return true
     else
         return false
+    end
+end
+
+"""
+    convert(::Type{LazySets.HalfSpace{N}}, expr::Expr; vars=nothing) where {N}
+
+Return a `LazySet.HalfSpace` given a symbolic expression that represents a halfspace.
+
+### Input
+
+- `expr` -- a symbolic expression
+- `vars` -- (optional, default: `nothing`): set of variables with respect to which
+            the gradient is taken; if nothing, it takes the free symbols in the given expression
+
+### Output
+
+A `HalfSpace`, in the form `ax <= b`.
+
+### Examples
+
+```jldoctest convert_halfspace
+julia> import SX.convert
+
+julia> convert(HalfSpace, :(x1 <= -0.03))
+LazySets.HalfSpace{Float64}([1.0], -0.03)
+
+julia> convert(HalfSpace, :(x1 < -0.03))
+LazySets.HalfSpace{Float64}([1.0], -0.03)
+
+julia> convert(HalfSpace, :(x1 > -0.03))
+LazySets.HalfSpace{Float64}([-1.0], 0.03)
+
+julia> convert(HalfSpace, :(x1 >= -0.03))
+LazySets.HalfSpace{Float64}([-1.0], 0.03)
+
+julia> convert(HalfSpace, :(x1 + x2 <= 2*x4 + 6))
+LazySets.HalfSpace{Float64}([1.0, 1.0, -2.0], 6.0)
+```
+
+You can also specify the set of "ambient" variables, even if not
+all of them appear:
+
+```jldoctest convert_halfspace
+julia> convert(HalfSpace, :(x1 + x2 <= 2*x4 + 6), vars=Basic[:x1, :x2, :x3, :x4])
+LazySets.HalfSpace{Float64}([1.0, 1.0, 0.0, -2.0], 6.0)
+```
+"""
+function convert(::Type{LazySets.HalfSpace{N}}, expr::Expr; vars::Vector{SymEngine.Basic}=Basic[]) where {N}
+
+    @assert is_halfspace(expr) "the expression :(expr) does not correspond to a halfspace"
+
+    # check sense of the inequality, assuming < or <= by default
+    got_geq = expr.args[1] in [:(>=), :(>)]
+
+    # get sides of the inequality
+    lhs, rhs = convert(Basic, expr.args[2]), convert(Basic, expr.args[3])
+
+    # a1 x1 + ... + an xn + K [cmp] 0 for cmp in <, <=, >, >=
+    eq = lhs - rhs
+    if isempty(vars)
+        vars = free_symbols(eq)
+    end
+    K = subs(eq, [vi => zero(N) for vi in vars]...)
+    a = convert(Basic, eq - K)
+
+    # convert to numeric types
+    K = convert(N, K)
+    a = convert(Vector{N}, diff.(a, vars))
+
+    if got_geq
+        return HalfSpace(-a, K)
+    else
+        return HalfSpace(a, -K)
+    end
+end
+
+# type-less default halfspace conversion
+convert(::Type{LazySets.HalfSpace}, expr::Expr; vars::Vector{SymEngine.Basic}=Basic[]) = convert(LazySets.HalfSpace{Float64}, expr; vars=vars)
+
+"""
+    convert(::Type{LazySets.Hyperplane{N}}, expr::Expr; vars=nothing) where {N}
+
+Return a `LazySet.Hyperplane` given a symbolic expression that represents a hyperplane.
+
+### Input
+
+- `expr` -- a symbolic expression
+- `vars` -- (optional, default: `nothing`): set of variables with respect to which
+            the gradient is taken; if nothing, it takes the free symbols in the given expression
+
+### Output
+
+A `Hyperplane`, in the form `ax = b`.
+
+### Examples
+
+```jldoctest convert_hyperplane
+julia> import SX.convert
+
+julia> convert(Hyperplane, :(x1 = -0.03))
+LazySets.Hyperplane{Float64}([1.0], -0.03)
+
+julia> convert(Hyperplane, :(x1 + 0.03 = 0))
+LazySets.Hyperplane{Float64}([1.0], -0.03)
+
+julia> convert(Hyperplane, :(x1 + x2 = 2*x4 + 6))
+LazySets.Hyperplane{Float64}([1.0, 1.0, -2.0], 6.0)
+```
+
+You can also specify the set of "ambient" variables in the hyperplane, even if not
+all of them appear:
+
+```jldoctest convert_hyperplane
+julia> convert(Hyperplane, :(x1 + x2 = 2*x4 + 6), vars=Basic[:x1, :x2, :x3, :x4])
+LazySets.Hyperplane{Float64}([1.0, 1.0, 0.0, -2.0], 6.0)
+```
+"""
+function convert(::Type{LazySets.Hyperplane{N}}, expr::Expr; vars::Vector{SymEngine.Basic}=Basic[]) where {N}
+
+    @assert is_hyperplane(expr) "the expression :(expr) does not correspond to a Hyperplane"
+
+    # get sides of the inequality
+    lhs = convert(Basic, expr.args[1])
+
+    # treats the 4 in :(2*x1 = 4)
+    rhs = :args in fieldnames(expr.args[2]) ? convert(Basic, expr.args[2].args[2]) : convert(Basic, expr.args[2])
+
+    # a1 x1 + ... + an xn + K = 0
+    eq = lhs - rhs
+    if isempty(vars)
+        vars = free_symbols(eq)
+    end
+    K = subs(eq, [vi => zero(N) for vi in vars]...)
+    a = convert(Basic, eq - K)
+
+    # convert to numeric types
+    K = convert(N, K)
+    a = convert(Vector{N}, diff.(a, vars))
+
+    return Hyperplane(a, -K)
+end
+
+# type-less default Hyperplane conversion
+convert(::Type{LazySets.Hyperplane}, expr::Expr; vars::Vector{SymEngine.Basic}=Basic[]) = convert(LazySets.Hyperplane{Float64}, expr; vars=vars)
+
+"""
+    free_symbols(expr::Expr, set_type::Type{LazySets.LazySet})
+
+Return the free symbols in an expression that represents a given set type.
+
+### Input
+
+- `expr` -- symbolic expression
+
+### Output
+
+A list of symbols, in the form of SymEngine `Basic` objects.
+
+### Examples
+
+```jldoctest free_symbols
+julia> import SX.free_symbols
+
+julia> free_symbols(:(x1 <= -0.03), HalfSpace)
+1-element Array{SymEngine.Basic,1}:
+ x1
+
+julia> free_symbols(:(x1 + x2 <= 2*x4 + 6), HalfSpace)
+3-element Array{SymEngine.Basic,1}:
+ x2
+ x1
+ x4
+```
+"""
+function free_symbols(expr::Expr, set_type::Type{<:LazySets.HalfSpace})
+    # get sides of the inequality
+    lhs, rhs = convert(Basic, expr.args[2]), convert(Basic, expr.args[3])
+    return free_symbols(lhs - rhs)
+end
+
+function free_symbols(expr::Expr, set_type::Type{<:LazySets.Hyperplane})
+    # get sides of the inequality
+    lhs, rhs = convert(Basic, expr.args[2]), convert(Basic, expr.args[3])
+    return free_symbols(lhs - rhs)
+end
+
+function free_symbols(expr::Expr)
+    if is_hyperplane(expr)
+        return free_symbols(expr, LazySets.HyperPlane)
+    elseif is_halfspace(expr)
+        return free_symbols(expr, LazySets.Halfspace)
+    else
+        error("the free symbols for the expression $(expr) is not implemented")
     end
 end
