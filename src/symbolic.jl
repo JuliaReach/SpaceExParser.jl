@@ -97,6 +97,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
             RHS = convert(Basic, fi.args[2])
 
             # constant terms (TODO: do we need to use subs?) use SymEngine.free_symbols ?
+            # TODO: use another approach, without the splat? (for efficiency)
             const_term = subs(RHS, [xi=>zero(N) for xi in state_variables]..., [ui=>zero(N) for ui in input_variables]...)
             if const_term != zero(N)
                 C[i] = const_term
