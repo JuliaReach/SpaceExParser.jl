@@ -341,7 +341,10 @@ end
 
 function free_symbols(expr::Expr, set_type::Type{<:LazySets.Hyperplane})
     # get sides of the inequality
-    lhs, rhs = convert(Basic, expr.args[2]), convert(Basic, expr.args[3])
+    lhs = convert(Basic, expr.args[1])
+
+    # treats the 4 in :(2*x1 = 4)
+    rhs = :args in fieldnames(expr.args[2]) ? convert(Basic, expr.args[2].args[2]) : convert(Basic, expr.args[2])
     return free_symbols(lhs - rhs)
 end
 

@@ -88,6 +88,9 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         # loop over each flow equation for this location
         for (i, fi) in enumerate(flows[id_location])
 
+            # FIXME maybe add a check for hyperplane, since we are with
+            # ST = ConstrainedLinearControlContinuousSystem
+
             # we are treating an equality x_i' = f(x, ...)
             @assert fi.head == :(=) "equality symbol expected in flow equation, found $(fi.head)"
 
