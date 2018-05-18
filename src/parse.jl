@@ -177,8 +177,8 @@ The `HDict` dictionary.
 
 1) Edge labels are not used and their symbol is (arbitrarily) set to the integer 1.
 2) Location identifications ("id" field) are assumed to be integers.
-3) The switchings types are assumed to be autonomous. See Switching in Systems
-   and Control, D. Liberzon, for further details on the classification of switchings.
+3) The switchings types are assumed to be autonomous. See Switching in *Systems
+   and Control*, D. Liberzon, for further details on the classification of switchings.
 4) We add fresh varaibles for each component (`id_variable += 1`). In general
    variables can be shared among components if the bindings are defined. Currently,
    we make the simplifying assumption that the model has only one component and
