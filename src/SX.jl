@@ -20,6 +20,7 @@ include("parse.jl")
 #================================================
 Converting symbolic expressions and systems types
 =================================================#
+include("convert.jl")
 include("symbolic.jl")
 
 end # module

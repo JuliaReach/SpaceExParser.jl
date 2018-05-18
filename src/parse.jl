@@ -50,7 +50,7 @@ Vector of expressions, equations or inequalities.
 
 ### Examples
 
-```jldoctest
+```jldoctest parse_sxmath
 julia> import SX.parse_sxmath
 
 julia> parse_sxmath("x >= 0")
@@ -70,7 +70,7 @@ julia> parse_sxmath("x == 0 & v <= 0")
 
 Parentheses are ignored:
 
-```jldoctest
+```jldoctest parse_sxmath
 julia> parse_sxmath("(x == 0) & (v <= 0)")
 2-element Array{Expr,1}:
  :(x = 0)
@@ -79,7 +79,7 @@ julia> parse_sxmath("(x == 0) & (v <= 0)")
 
 Splitting is also performend over double ampersand symbols:
 
-```jldoctest
+```jldoctest parse_sxmath
 julia> parse_sxmath("x == 0 && v <= 0")
 2-element Array{Expr,1}:
  :(x = 0)
@@ -88,15 +88,15 @@ julia> parse_sxmath("x == 0 && v <= 0")
 
 If you want to parse an assignment, use the `assignment` flag:
 
-```jldoctest
+```jldoctest parse_sxmath
 julia> parse_sxmath("x := -x*0.1", assignment=true)
 1-element Array{Expr,1}:
  :(x = -x * 0.1)
- ```
+```
 
  Check that we can parse expressions involving parentheses:
 
-```jldoctest
+```jldoctest parse_sxmath
 julia> parse_sxmath("(t <= 125 & y>= -100)")
 2-element Array{Expr,1}:
  :(t <= 125)
