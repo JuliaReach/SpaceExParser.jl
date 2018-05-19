@@ -72,8 +72,11 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         X = Vector{LazySet{N}}() # FIXME : use an intersection array?
         # should be a vector of vectors (one for each location)
 
-        # dimension of the statespace for this location
+        # dimension of the state space for this location
         n = length(flows[id_location])
+
+        # variables that are in the flow equations for this location
+        local_state_variables = convert.(Basic, [fi.args[1].args[1] for fi in flows[id_location]])
 
         # dynamics matrix
         A = Matrix{N}(n, n)
@@ -99,13 +102,14 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
 
             # constant terms (TODO: do we need to use subs?) use SymEngine.free_symbols ?
             # TODO: use another approach, without the splat? (for efficiency)
-            const_term = subs(RHS, [xi=>zero(N) for xi in state_variables]..., [ui=>zero(N) for ui in input_variables]...)
+            const_term = subs(RHS, [xi=>zero(N) for xi in local_state_variables]...,
+                                   [ui=>zero(N) for ui in input_variables]...)
             if const_term != zero(N)
                 C[i] = const_term
                 isaffine = true
             end
             # terms linear in the state variables
-            ex = diff.(RHS, state_variables)
+            ex = diff.(RHS, local_state_variables)
             A[i, :] = convert.(N, ex) # needs ex to be numeric, otherwise an error is prompted
 
             # terms linear in the input variables
@@ -124,8 +128,8 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
             end
 
             vars = free_symbols(invi, set_type)
-            if all(si in state_variables for si in vars)
-                h = convert(set_type, invi, vars=state_variables)
+            if all(si in local_state_variables for si in vars)
+                h = convert(set_type, invi, vars=local_state_variables)
                 push!(X, h)
             elseif all(si in input_variables for si in vars)
                 h = convert(set_type, invi, vars=input_variables)
@@ -161,8 +165,11 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         Xr = Vector{LazySet{N}}() # FIXME : use an intersection array
         # should be a vector of vectors (one for each transition)
 
-        # dimension of the statespace for this transition
+        # dimension of the state space for this transition
         n = length(assignments[id_transition])
+
+        # variables that are in the flow equations for this location
+        local_state_variables = convert.(Basic, [ai.args[1].args[1] for ai in assignments[id_transition]])
 
         # dynamics matrix
         Ar = Matrix{N}(n, n)
@@ -184,13 +191,14 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
             RHS = convert(Basic, ai.args[2])
 
             # constant terms (TODO: do we need to use subs?) use SymEngine.free_symbols ?
-            const_term = subs(RHS, [xi=>zero(N) for xi in state_variables]..., [ui=>zero(N) for ui in input_variables]...)
+            const_term = subs(RHS, [xi=>zero(N) for xi in local_state_variables]...,
+                                   [ui=>zero(N) for ui in input_variables]...)
             if const_term != zero(N)
                 Cr[i] = const_term
                 isaffine = true
             end
             # terms linear in the state variables
-            ex = diff.(RHS, state_variables)
+            ex = diff.(RHS, local_state_variables)
             Ar[i, :] = convert.(N, ex) # needs ex to be numeric, otherwise an error is prompted
 
             # terms linear in the input variables
@@ -209,8 +217,8 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
             end
 
             vars = free_symbols(gi, set_type)
-            if all(si in state_variables for si in vars)
-                h = convert(set_type, gi, vars=state_variables)
+            if all(si in local_state_variables for si in vars)
+                h = convert(set_type, gi, vars=local_state_variables)
                 push!(Xr, h)
             elseif all(si in input_variables for si in vars)
                 h = convert(set_type, gi, vars=input_variables)
