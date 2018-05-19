@@ -21,7 +21,7 @@ objects, for their inspection and analysis, such as reachability computations.
 
 ## Features
 
-- Parse SX files into types defined in Julia packages `HybridSystems.jl` and `Systems.jl`.
+- Parse SX files into types defined in Julia packages `HybridSystems.jl` and `MathematicalSystems.jl`.
 - Can read arbitrary ODEs, eg. non-linear dynamics in the ODE flow for each mode.
 
 ## Library Outline

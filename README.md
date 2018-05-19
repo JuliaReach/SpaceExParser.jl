@@ -13,12 +13,17 @@
 - [Manual](http://juliareach.github.io/SX.jl/latest/)
 - [Contributing](https://juliareach.github.io/SX.jl/latest/about.html#Contributing-1)
 
+## Dependencies
+
+This package relies on the interfaces defined in [HybridSystems.jl](https://github.com/blegat/HybridSystems.jl) and [MathematicalSystems.jl](https://github.com/JuliaReach/MathematicalSystems.jl). To handle XML files, we use [EzXML.jl](https://github.com/bicycle1885/EzXML.jl). Symbolic algebraic manipulations are performed with [SymEngine](https://github.com/symengine/SymEngine.jl). 
+
 ## Installing
 
 This package requires Julia v0.6 or later. Refer to the [official documentation](https://julialang.org/downloads)
 on how to install and run Julia in your system.
 
-To install this package, use the following command inside Julia's REPL:
+To install the package SX, use the following command inside Julia's REPL:
+
 ```julia
 Pkg.clone("https://github.com/JuliaReach/SX.jl")
 ```
