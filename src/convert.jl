@@ -92,11 +92,7 @@ function is_halfspace(expr::Expr)::Bool
     lhs, rhs = convert(Basic, expr.args[2]), convert(Basic, expr.args[3])
 
     # check if the expression defines a halfspace
-    if is_linearcombination(lhs) && is_linearcombination(rhs)
-        return true
-    else
-        return false
-    end
+    return is_linearcombination(lhs) && is_linearcombination(rhs)
 end
 
 """
@@ -155,11 +151,7 @@ function is_hyperplane(expr::Expr)::Bool
     end
 
     # check if the expression defines a hyperplane
-    if is_linearcombination(lhs) && is_linearcombination(rhs)
-        return true
-    else
-        return false
-    end
+    return is_linearcombination(lhs) && is_linearcombination(rhs)
 end
 
 """
