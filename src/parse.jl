@@ -50,7 +50,7 @@ Vector of expressions, equations or inequalities.
 
 ### Examples
 
-```jldoctest
+```jldoctest parse_sxmath
 julia> import SX.parse_sxmath
 
 julia> parse_sxmath("x >= 0")
@@ -70,7 +70,7 @@ julia> parse_sxmath("x == 0 & v <= 0")
 
 Parentheses are ignored:
 
-```jldoctest
+```jldoctest parse_sxmath
 julia> parse_sxmath("(x == 0) & (v <= 0)")
 2-element Array{Expr,1}:
  :(x = 0)
@@ -79,7 +79,7 @@ julia> parse_sxmath("(x == 0) & (v <= 0)")
 
 Splitting is also performend over double ampersand symbols:
 
-```jldoctest
+```jldoctest parse_sxmath
 julia> parse_sxmath("x == 0 && v <= 0")
 2-element Array{Expr,1}:
  :(x = 0)
@@ -88,31 +88,74 @@ julia> parse_sxmath("x == 0 && v <= 0")
 
 If you want to parse an assignment, use the `assignment` flag:
 
-```jldoctest
+```jldoctest parse_sxmath
 julia> parse_sxmath("x := -x*0.1", assignment=true)
 1-element Array{Expr,1}:
  :(x = -x * 0.1)
- ```
+```
+
+ Check that we can parse expressions involving parentheses:
+
+```jldoctest parse_sxmath
+julia> parse_sxmath("(t <= 125 & y>= -100)")
+2-element Array{Expr,1}:
+ :(t <= 125)
+ :(y >= -100)
+julia> parse_sxmath("t <= 125 & (y>= -100)")
+2-element Array{Expr,1}:
+ :(t <= 125)
+ :(y >= -100)
+```
 
 ### Algorithm
 
-Consists of the following steps (in the given order):
+First a sanity check (assertion) is made that the expression makes a coherent use
+of parentheses.
+
+Then, the following steps are done (in the given order):
 
 - split the string with the `&` key, or `&&`
 - remove trailing whitespace of each substring
 - replace double `==` with single `=`
+- detect unbalanced parentheses (beginning and final subexpressions) and in that case delete them
 - cast to a Julia expression with `parse`
+
+### Notes
 
 For assignments, the nomenclature `:=` is also valid and here it is replaced
 to `=`, but you need to set `assignment=true` for this replacement to take effect.
+
+The characters `'('` and `')'` are deleted (replaced by the empty character),
+whenever it is found that there are unbalanced parentheses after the expression is
+splitted into subexpressions.
 """
 function parse_sxmath(s; assignment=false)
-    expr = split(replace(s, "&&", "&"), "&")
-    expr = strip.(expr)
+
+    count_left_parentheses = s -> count(c -> c == '(', collect(s))
+    count_right_parentheses = s -> count(c -> c == ')', collect(s))
+    @assert count_left_parentheses(s) == count_right_parentheses(s) "the expression $(s) is not well formed"
+
+    expr = strip.(split(replace(s, "&&", "&"), "&"))
     if assignment
         expr = replace.(expr, ":=", "=")
     end
     expr = replace.(expr, "==", "=")
+
+    # remove irrelevant parentheses from the beginning and the end
+    for (i, expri) in enumerate(expr)
+        m = count_left_parentheses(expri)
+        n = count_right_parentheses(expri)
+        if m == n
+            nothing
+        elseif m > n && expri[1] == '('
+            expr[i] = expri[2:end]
+        elseif m < n && expri[end] == ')'
+            expr[i] = expri[1:end-1]
+        else
+            error("malformed subexpression $(expri)")
+        end
+    end
+
     return parse.(expr)
 end
 
@@ -281,10 +324,15 @@ symbolic expressions `Expr`.
 ### Notes
 
 It is assumed that the "source" and "target" fields can be cast to integers.
+
+It can happen that the given transition does not contain the "guard" field (or
+the "assignment", or both); in that case this function returns an empty of
+expressions for those cases.
 """
 function parse_transition(field)
     q, r = parse(Int, field["source"]), parse(Int, field["target"])
-    local G, A
+    G = Vector{Expr}()
+    A = Vector{Expr}()
     for element in eachelement(field)
         if nodename(element) == "guard"
             G = parse_sxmath(nodecontent(element))

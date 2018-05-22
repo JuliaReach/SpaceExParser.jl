@@ -6,3 +6,4 @@ SymEngine
 DataStructures
 Reexport
 FillArrays
+LazySets

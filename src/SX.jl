@@ -5,6 +5,7 @@ module SX
 import DataStructures, FillArrays
 using EzXML, Reexport
 @reexport using HybridSystems, MathematicalSystems, SymEngine
+using LazySets
 
 #=========================
 Input/Output functions
@@ -20,6 +21,7 @@ include("parse.jl")
 #================================================
 Converting symbolic expressions and systems types
 =================================================#
-#include("symbolic.jl")
+include("convert.jl")
+include("symbolic.jl")
 
 end # module

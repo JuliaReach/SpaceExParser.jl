@@ -18,6 +18,7 @@ end
 
 ```@docs
 readsxmodel
+linearHS
 ```
 
 ### Parsing the SX language
@@ -30,4 +31,12 @@ SX.add_variable!
 SX.add_transition_label!
 SX.parse_location
 SX.parse_transition
+```
+
+### Conversion of symbolic expressions into sets
+
+```@docs
+SX.is_halfspace
+SX.is_hyperplane
+SX.is_linearcombination
 ```
