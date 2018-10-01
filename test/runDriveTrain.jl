@@ -19,12 +19,12 @@ t = parse_sxmath("t == 0.0")
 expr_p = parse_sxmath("x1 - -0.0488 == 0.0005600000000000001 * (x4 - 20.0) & x2 - -15.67 == 0.46699999999999997 * (x4 - 20.0) & x3 == 0.0 & x5 == 0.0 & x6 - 20.0 == 1.0 * (x4 - 20.0) & x7 - 240.0 == 12.0 * (x4 - 20.0) & x8 - -0.0019199999999999998 == 0.00005999999999999998 * (x4 - 20.0) & x9 - 20.0 == 1.0 * (x4 - 20.0) & 20.0 <= x4 & x4 <= 40.0 & t == 0.0")
 expr = [x1, x2, x3, x4,x5,x6,x7,x8,x9,t]
 x0sets = []
-vars = Basic[:x1, :x2, :x3, :x4, :x6, :x7, :x8, :x9, :t]
-for expr_i in expr_p
-    if is_halfspace(expr_i)
-        push!(x0sets, convert(HalfSpace, expr_i, vars=vars))
-    elseif is_hyperplane(expr_i)
-        push!(x0sets, convert(Hyperplane, expr_i, vars=vars))
+vars = Basic[:x1, :x2, :x3, :x4, :x5, :x6, :x7, :x8, :x9, :t]
+for expr_i in expr
+    if is_halfspace(expr_i[1])
+        push!(x0sets, convert(HalfSpace, expr_i[1], vars=vars))
+    elseif is_hyperplane(expr_i[1])
+        push!(x0sets, convert(Hyperplane, expr_i[1], vars=vars))
     end
 end
 
