@@ -20,11 +20,11 @@ expr_p = parse_sxmath("x1 - -0.0488 == 0.0005600000000000001 * (x4 - 20.0) & x2 
 expr = [x1, x2, x3, x4,x5,x6,x7,x8,x9,t]
 x0sets = []
 vars = Basic[:x1, :x2, :x3, :x4, :x5, :x6, :x7, :x8, :x9, :t]
-for expr_i in expr
-    if is_halfspace(expr_i[1])
-        push!(x0sets, convert(HalfSpace, expr_i[1], vars=vars))
-    elseif is_hyperplane(expr_i[1])
-        push!(x0sets, convert(Hyperplane, expr_i[1], vars=vars))
+for expr_i in expr_p
+    if is_halfspace(expr_i)
+        push!(x0sets, convert(HalfSpace, expr_i, vars=vars))
+    elseif is_hyperplane(expr_i)
+        push!(x0sets, convert(Hyperplane, expr_i, vars=vars))
     end
 end
 
