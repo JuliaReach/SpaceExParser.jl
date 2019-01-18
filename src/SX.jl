@@ -2,6 +2,11 @@ __precompile__(true)
 
 module SX
 
+#========================================
+Compatibility for previous Julia versions
+==============-==========================#
+include("compat.jl")
+
 import DataStructures, FillArrays
 using EzXML, Reexport
 @reexport using HybridSystems, MathematicalSystems, SymEngine

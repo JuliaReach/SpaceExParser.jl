@@ -102,19 +102,19 @@ function readsxmodel(file; raw_dict=false,
     transitionlabels = Set{String}()
 
     # vector with the invariants for each location
-    invariants = Vector{Vector{Expr}}(nlocations)
+    invariants = Vector{Vector{Expr}}(undef, nlocations)
 
     # vector with the ODE flow for each location
-    flows = Vector{Vector{Expr}}(nlocations)
+    flows = Vector{Vector{Expr}}(undef, nlocations)
 
     # assignments for each transition
-    assignments = Vector{Vector{Expr}}(ntransitions)
+    assignments = Vector{Vector{Expr}}(undef, ntransitions)
 
     # guards for each transition; subsets of state space where the state needs
     # to be to make the transition
-    guards = Vector{Vector{Expr}}(ntransitions)
+    guards = Vector{Vector{Expr}}(undef, ntransitions)
 
-    switchings = Vector{AbstractSwitching}(ntransitions)
+    switchings = Vector{AbstractSwitching}(undef, ntransitions)
 
     HDict = Dict("automaton"=>automaton,
                  "variables"=>variables,
