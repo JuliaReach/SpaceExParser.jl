@@ -137,9 +137,9 @@ function parse_sxmath(s; assignment=false)
 
     expr = strip.(split(replace(s, "&&" => "&"), "&"))
     if assignment
-        expr = replace.(expr, ":=" => "=")
+        expr = replace.(expr, Ref(":=" => "="))
     end
-    expr = replace.(expr, "==" => "=")
+    expr = replace.(expr, Ref("==" => "="))
 
     # remove irrelevant parentheses from the beginning and the end
     for (i, expri) in enumerate(expr)

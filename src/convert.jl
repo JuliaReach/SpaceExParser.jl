@@ -143,7 +143,7 @@ function is_hyperplane(expr::Expr)::Bool
     # convert to symengine expressions
     lhs = convert(Basic, expr.args[1])
 
-    if :args in fieldnames(expr.args[2])
+    if :args in fieldnames(typeof(expr.args[2]))
         # treats the 4 in :(2*x1 = 4)
         rhs = convert(Basic, expr.args[2].args[2])
     else
@@ -276,7 +276,7 @@ function convert(::Type{LazySets.Hyperplane{N}}, expr::Expr; vars::Vector{SymEng
     lhs = convert(Basic, expr.args[1])
 
     # treats the 4 in :(2*x1 = 4)
-    rhs = :args in fieldnames(expr.args[2]) ? convert(Basic, expr.args[2].args[2]) : convert(Basic, expr.args[2])
+    rhs = :args in fieldnames(typeof(expr.args[2])) ? convert(Basic, expr.args[2].args[2]) : convert(Basic, expr.args[2])
 
     # a1 x1 + ... + an xn + K = 0
     eq = lhs - rhs
@@ -336,7 +336,7 @@ function free_symbols(expr::Expr, set_type::Type{<:LazySets.Hyperplane})
     lhs = convert(Basic, expr.args[1])
 
     # treats the 4 in :(2*x1 = 4)
-    rhs = :args in fieldnames(expr.args[2]) ? convert(Basic, expr.args[2].args[2]) : convert(Basic, expr.args[2])
+    rhs = :args in fieldnames(typeof(expr.args[2])) ? convert(Basic, expr.args[2].args[2]) : convert(Basic, expr.args[2])
     return free_symbols(lhs - rhs)
 end
 
