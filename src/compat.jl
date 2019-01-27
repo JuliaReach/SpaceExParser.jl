@@ -1,4 +1,5 @@
 using Compat
+using Compat: @warn
 
 @static if VERSION >= v"0.7"
     const _parse_s = Base.Meta.parse
