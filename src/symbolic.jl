@@ -60,7 +60,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
     nlocations, ntransitions = HDict["nlocations"], HDict["ntransitions"]
 
     # vector of modes (flows, invariants)
-    modes = Vector{ST}(nlocations)
+    modes = Vector{ST}(undef, nlocations)
 
     for id_location in eachindex(flows)
 
@@ -79,10 +79,10 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         local_state_variables = convert.(Basic, [fi.args[1].args[1] for fi in flows[id_location]])
 
         # dynamics matrix
-        A = Matrix{N}(n, n)
+        A = Matrix{N}(undef, n, n)
 
         # forcing terms
-        B = Matrix{N}(n, m)
+        B = Matrix{N}(undef, n, m)
         C = zeros(N, n) # constant terms
 
         # track if there are constant terms
@@ -153,7 +153,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
     end
 
     # reset maps (assignments, guards) for each transition (equations)
-    resetmaps = Vector{STD}(ntransitions)
+    resetmaps = Vector{STD}(undef, ntransitions)
 
     for id_transition in eachindex(assignments)
 
@@ -172,10 +172,10 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         local_state_variables = convert.(Basic, [ai.args[1].args[1] for ai in assignments[id_transition]])
 
         # dynamics matrix
-        Ar = Matrix{N}(n, n)
+        Ar = Matrix{N}(undef, n, n)
 
         # forcing terms
-        Br = Matrix{N}(n, m)
+        Br = Matrix{N}(undef, n, m)
         Cr = zeros(N, n) # constant terms
 
         # track if there are constant terms
