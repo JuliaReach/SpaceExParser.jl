@@ -6,4 +6,5 @@ SymEngine
 DataStructures
 Reexport
 FillArrays
-LazySets
+LazySets 1.5.3
+Compat

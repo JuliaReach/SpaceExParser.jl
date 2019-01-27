@@ -135,11 +135,11 @@ function parse_sxmath(s; assignment=false)
     count_right_parentheses = s -> count(c -> c == ')', collect(s))
     @assert count_left_parentheses(s) == count_right_parentheses(s) "the expression $(s) is not well formed"
 
-    expr = strip.(split(replace(s, "&&", "&"), "&"))
+    expr = strip.(split(replace(s, "&&" => "&"), "&"))
     if assignment
-        expr = replace.(expr, ":=", "=")
+        expr = replace.(expr, Ref(":=" => "="))
     end
-    expr = replace.(expr, "==", "=")
+    expr = replace.(expr, Ref("==" => "="))
 
     # remove irrelevant parentheses from the beginning and the end
     for (i, expri) in enumerate(expr)
@@ -156,7 +156,7 @@ function parse_sxmath(s; assignment=false)
         end
     end
 
-    return parse.(expr)
+    return _parse_s.(expr)
 end
 
 """
@@ -248,9 +248,9 @@ function add_variable!(variables, field, id=1)
     # d1 and d2 are the dimensions (d1=d2=1 for scalars)
     @assert field["d1"] == "1" && field["d2"] == "1"
 
-    varname = parse(field["name"])
-    islocal = haskey(field, "local") ? parse(field["local"]) : false
-    iscontrolled = haskey(field, "controlled") ? parse(field["controlled"]) : true
+    varname = _parse_s(field["name"])
+    islocal = haskey(field, "local") ? _parse_s(field["local"]) : false
+    iscontrolled = haskey(field, "controlled") ? _parse_s(field["controlled"]) : true
     dynamicstype = haskey(field, "dynamics") ? field["dynamics"] : "any"
 
     variables[varname] = Dict("local"=>islocal,
@@ -293,7 +293,7 @@ and similarly `f` is the list of ODEs that define the flow for this location.
 Both objects are vectors of symbolic expressions `Expr`.
 """
 function parse_location(field)
-    id = parse(Int, field["id"])
+    id = _parse_t(Int, field["id"])
     local I, f
     for element in eachelement(field)
         if nodename(element) == "invariant"
@@ -301,7 +301,7 @@ function parse_location(field)
         elseif nodename(element) == "flow"
             f = parse_sxmath(nodecontent(element))
         else
-            warn("field $(nodename(element)) in location $(field["id"]) is ignored")
+            @warn("field $(nodename(element)) in location $(field["id"]) is ignored")
         end
     end
     return (id, I, f)
@@ -330,7 +330,7 @@ the "assignment", or both); in that case this function returns an empty of
 expressions for those cases.
 """
 function parse_transition(field)
-    q, r = parse(Int, field["source"]), parse(Int, field["target"])
+    q, r = _parse_t(Int, field["source"]), _parse_t(Int, field["target"])
     G = Vector{Expr}()
     A = Vector{Expr}()
     for element in eachelement(field)
@@ -339,7 +339,7 @@ function parse_transition(field)
         elseif nodename(element) == "assignment"
             A = parse_sxmath(nodecontent(element), assignment=true)
         else
-            warn("field $(nodename(element)) in transition $(field["source"]) → $(field["target"]) is ignored")
+            @warn("field $(nodename(element)) in transition $(field["source"]) → $(field["target"]) is ignored")
         end
     end
     return (q, r, G, A)
