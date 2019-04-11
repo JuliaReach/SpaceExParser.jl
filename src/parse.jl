@@ -299,7 +299,10 @@ Both the invariant and the flow are vectors of symbolic expressions `Expr`.
 """
 function parse_location(field)
     id = _parse_t(Int, field["id"])
-    local invariant, flow
+
+    # if it happens that no invariant (or no flow) is defined in the component,
+    # then this function will return an empty list of expressions
+    invariant, flow = Expr[], Expr[]
     for element in eachelement(field)
         if nodename(element) == "invariant"
             invariant = parse_sxmath(nodecontent(element))
@@ -309,17 +312,6 @@ function parse_location(field)
             @warn("field $(nodename(element)) in location $(field["id"]) is ignored")
         end
     end
-
-    # if no invariant is defined in the model => return empty list of expressions
-    if !@isdefined(invariant) || invariant isa Vector{Nothing}
-        invariant = Expr[:()]
-    end
-
-    # if no flow is defined in the component => return empty list expressions
-    if !@isdefined(flow) || flow == Vector{Nothing}
-        flow = Expr[:()]
-    end
-
     return (id, invariant, flow)
 end
 
