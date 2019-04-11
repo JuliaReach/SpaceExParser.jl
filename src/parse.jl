@@ -305,7 +305,7 @@ function parse_location(field)
 
     # if it happens that no invariant (or no flow) is defined in the component,
     # then this function will return an empty list of expressions
-    invariant, flow = Expr[], Expr[]
+    invariant, flow = Expr[:()], Expr[:()]
     for element in eachelement(field)
         if nodename(element) == "invariant"
             invariant = parse_sxmath(nodecontent(element))
