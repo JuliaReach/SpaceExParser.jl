@@ -141,6 +141,9 @@ function parse_sxmath(s; assignment=false)
     end
     expr = replace.(expr, Ref("==" => "="))
 
+    # remove "true" statements
+    filter!(expri -> expri != "true", expr)
+
     # remove irrelevant parentheses from the beginning and the end
     for (i, expri) in enumerate(expr)
         m = count_left_parentheses(expri)
@@ -155,7 +158,6 @@ function parse_sxmath(s; assignment=false)
             error("malformed subexpression $(expri)")
         end
     end
-
     return _parse_s.(expr)
 end
 
@@ -287,24 +289,30 @@ end
 
 ### Output
 
-The tuple `(id, I, f)` where `id` is the integer that identifies the location,
-`I` is the list of subexpressions that determine that invariant for this location,
-and similarly `f` is the list of ODEs that define the flow for this location.
-Both objects are vectors of symbolic expressions `Expr`.
+The tuple `(id, invariant, flow)` where:
+
+- `id` is the integer that identifies the location,
+- `invariant` is the list of subexpressions that determine that invariant for this location,
+-  `flow` is the list of ODEs that define the flow for this location.
+
+Both the invariant and the flow are vectors of symbolic expressions `Expr`.
 """
 function parse_location(field)
     id = _parse_t(Int, field["id"])
-    local I, f
+
+    # if it happens that no invariant (or no flow) is defined in the component,
+    # then this function will return an empty list of expressions
+    invariant, flow = Expr[], Expr[]
     for element in eachelement(field)
         if nodename(element) == "invariant"
-            I = parse_sxmath(nodecontent(element))
+            invariant = parse_sxmath(nodecontent(element))
         elseif nodename(element) == "flow"
-            f = parse_sxmath(nodecontent(element))
+            flow = parse_sxmath(nodecontent(element))
         else
             @warn("field $(nodename(element)) in location $(field["id"]) is ignored")
         end
     end
-    return (id, I, f)
+    return (id, invariant, flow)
 end
 
 """

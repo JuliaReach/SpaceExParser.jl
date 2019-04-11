@@ -96,7 +96,7 @@ function readsxmodel(file; raw_dict=false,
     automaton = LightAutomaton(nlocations)
 
     # ditionary with variables names and their properties
-    variables = DataStructures.OrderedDict{Symbol, Dict{String, Any}}()
+    variables = OrderedDict{Symbol, Dict{String, Any}}()
 
     # set of labels for the transitions
     transitionlabels = Set{String}()

@@ -1,4 +1,4 @@
-using SX
+using SX, HybridSystems, MathematicalSystems
 using Compat, Compat.Test
 
 include("unit_examples.jl")

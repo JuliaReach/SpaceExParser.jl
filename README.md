@@ -12,6 +12,8 @@
 
 - [Manual](http://juliareach.github.io/SX.jl/latest/)
 - [Contributing](https://juliareach.github.io/SX.jl/latest/about.html#Contributing-1)
+- [Release notes](https://github.com/JuliaReach/SX.jl/releases)
+- [Release notes of the development version](https://github.com/JuliaReach/SX.jl/wiki/Release-log-tracker)
 
 ## Dependencies
 
@@ -19,18 +21,21 @@ This package relies on the interfaces defined in [HybridSystems.jl](https://gith
 
 ## Installing
 
-This package requires Julia v0.6 or later. Refer to the [official documentation](https://julialang.org/downloads)
-on how to install and run Julia in your system.
+This package requires Julia v1.0 or later. Refer to the
+[official documentation](https://julialang.org/downloads) on how to install and
+run Julia in your system.
 
-To install the package SX, use the following command inside Julia's REPL:
+To install the package `SX`, use the following command inside Julia's REPL:
 
 ```julia
+using Pkg
 Pkg.clone("https://github.com/JuliaReach/SX.jl")
 ```
 
 ## Updating
 
-To checkout the latest version, do
+To checkout the latest (development) version, do:
+
 ```julia
-Pkg.checkout("SX")
-````
+Pkg.add(PackageSpec(url="https://github.com/JuliaReach/SX.jl", rev="master"))
+```
