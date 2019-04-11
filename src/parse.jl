@@ -310,7 +310,7 @@ function parse_location(field)
         end
     end
 
-    # if no invariant is defined in the model => return empty expressions
+    # if no invariant is defined in the model => return empty list of expressions
     if !@isdefined(invariant) || invariant isa Vector{Nothing}
         invariant = Expr[:()]
     end
