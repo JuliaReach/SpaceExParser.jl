@@ -315,7 +315,7 @@ function parse_location(field)
         invariant = Expr[:()]
     end
 
-    # if no flow is defined in the component => return empty expressions
+    # if no flow is defined in the component => return empty list expressions
     if !@isdefined(flow) || flow == Vector{Nothing}
         flow = Expr[:()]
     end
