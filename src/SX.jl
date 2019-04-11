@@ -3,14 +3,16 @@ __precompile__(true)
 module SX
 
 #=========================================
+Load dependencies
+=========================================#
+
+using DataStructures: OrderedDict
+using EzXML, HybridSystems, LazySets, MathematicalSystems, Reexport, SymEngine
+
+#=========================================
 Compatibility for previous Julia versions
 =========================================#
 include("compat.jl")
-
-import DataStructures, FillArrays
-using EzXML, Reexport
-@reexport using HybridSystems, MathematicalSystems, SymEngine
-using LazySets
 
 #=========================
 Input/Output functions

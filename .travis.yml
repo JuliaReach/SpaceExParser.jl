@@ -3,43 +3,20 @@ language: julia
 os:
   - linux
 julia:
-  - 0.6
-  - 0.7
-  - 1.0
+  - 1.1
   - nightly
 notifications:
   email: false
 git:
   depth: 99999999
 
-## uncomment the following lines to allow failures on nightly julia
-## (tests will run but not make your overall status red)
 matrix:
   allow_failures:
   - julia: nightly
 
-## uncomment and modify the following lines to manually install system packages
-#addons:
-#  apt: # apt-get for linux
-#    packages:
-#    - gfortran
-#before_script: # homebrew for mac
-#  - if [ $TRAVIS_OS_NAME = osx ]; then brew install gcc; fi
-
-## uncomment the following lines to override the default test script
-#before_script:
-#  - julia -e 'Pkg.clone("https://github.com/JuliaReach/Systems.jl.git")'
-#  - julia -e 'Pkg.clone("https://github.com/blegat/HybridSystems.jl.git")'
-
-#script:
-#  - julia -e 'Pkg.clone(pwd()); Pkg.build("SX"); Pkg.test("SX"; coverage=true)'
-
 after_success:
   - julia -e 'Pkg.add("Documenter");'
   - julia -e 'cd(Pkg.dir("SX")); include(joinpath("docs", "make.jl"))'
-  # code coverage (for both Coveralls and Codecov)
   - julia -e 'Pkg.add("Coverage")'
-  # push coverage results to Coveralls
   - julia -e 'cd(Pkg.dir("SX")); using Coverage; Coveralls.submit(Coveralls.process_folder())'
-  # push coverage results to Codecov
   - julia -e 'cd(Pkg.dir("SX")); using Coverage; Codecov.submit(Codecov.process_folder())'

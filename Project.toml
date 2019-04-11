@@ -1,0 +1,21 @@
+name = "SX"
+uuid = "2e6cc458-d83e-591d-8542-f3776f70ceb9"
+authors = ["mforets <mforets@gmail.com>"]
+version = "0.3.0"
+
+[deps]
+Compat = "34da2185-b29b-5c13-b0c7-acf172513d20"
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+EzXML = "8f5d6c58-4d21-5cfd-889c-e3ad7ee6a615"
+FillArrays = "1a297f60-69ca-5386-bcde-b61e274b549b"
+HybridSystems = "2207ec0c-686c-5054-b4d2-543502888820"
+LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
+MathematicalSystems = "d14a8603-c872-5ed3-9ece-53e0e82e39da"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+SymEngine = "123dc426-2d89-5057-bbad-38513e3affd8"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
