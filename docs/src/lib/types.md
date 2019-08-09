@@ -9,7 +9,4 @@ Depth = 3
 
 ```@meta
 CurrentModule = SX
-DocTestSetup = quote
-    using SX
-end
 ```
