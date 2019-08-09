@@ -16,8 +16,14 @@ matrix:
   - julia: nightly
 
 after_success:
-  - julia -e 'Pkg.add("Documenter");'
-  - julia -e 'cd(Pkg.dir("SX")); include(joinpath("docs", "make.jl"))'
-  - julia -e 'Pkg.add("Coverage")'
-  - julia -e 'cd(Pkg.dir("SX")); using Coverage; Coveralls.submit(Coveralls.process_folder())'
-  - julia -e 'cd(Pkg.dir("SX")); using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
+
+jobs:
+  include:
+    - stage: "Documentation"
+      julia: 1.0
+      os: linux
+      script:
+        - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate();'
+        - julia --project=docs/ docs/make.jl
+      after_success: skip
