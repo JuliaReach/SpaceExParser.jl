@@ -15,5 +15,5 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/JuliaReach/LazySets.jl.git"
+    repo = "github.com/JuliaReach/SX.jl.git"
 )
