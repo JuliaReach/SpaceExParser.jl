@@ -1,3 +1,6 @@
+const _parse_s = Base.Meta.parse
+const _parse_t = Base.parse
+
 """
     count_locations_and_transitions(root_sxmodel)
 

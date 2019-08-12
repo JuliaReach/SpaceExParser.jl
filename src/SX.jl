@@ -9,11 +9,6 @@ Load dependencies
 using DataStructures: OrderedDict
 using EzXML, HybridSystems, LazySets, MathematicalSystems, Reexport, SymEngine
 
-#=========================================
-Compatibility for previous Julia versions
-=========================================#
-include("compat.jl")
-
 #=========================
 Input/Output functions
 ==========================#
