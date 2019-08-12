@@ -21,19 +21,21 @@ linearHS
 ### Parsing the SX language
 
 ```@docs
-SX.count_locations_and_transitions
-SX.parse_sxmath
-SX.parse_sxmodel!
-SX.add_variable!
-SX.add_transition_label!
-SX.parse_location
-SX.parse_transition
+count_locations_and_transitions
+parse_sxmath
+parse_sxmodel!
+add_variable!
+add_transition_label!
+parse_location
+parse_transition
 ```
 
 ### Conversion of symbolic expressions into sets
 
 ```@docs
-SX.is_halfspace
-SX.is_hyperplane
-SX.is_linearcombination
+convert
+free_symbols
+is_halfspace
+is_hyperplane
+is_linearcombination
 ```
