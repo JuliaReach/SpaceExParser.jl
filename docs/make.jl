@@ -1,5 +1,7 @@
 using Documenter, SX
 
+DocMeta.setdocmeta!(SX, :DocTestSetup, :(using SX); recursive=true)
+
 makedocs(
     sitename = "SX.jl",
     modules = [SX],
