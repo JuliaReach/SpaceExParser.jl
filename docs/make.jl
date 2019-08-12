@@ -13,7 +13,8 @@ makedocs(
         "Examples" => Any["Introduction" => "examples/examples.md", "Bouncing ball" => "examples/bball.md"],
         "Library" => Any["Types" => "lib/types.md", "Methods" => "lib/methods.md"],
         "About" => "about.md"
-    ]
+    ],
+    strict = true
 )
 
 deploydocs(
