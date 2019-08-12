@@ -1,5 +1,4 @@
-using SX, HybridSystems, MathematicalSystems
-using Compat, Compat.Test
+using Test, SX, HybridSystems, MathematicalSystems
 
 include("unit_examples.jl")
 include("unit_parse.jl")

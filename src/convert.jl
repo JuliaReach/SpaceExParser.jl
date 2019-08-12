@@ -1,5 +1,5 @@
-import Base.convert
-import SymEngine:convert, free_symbols
+import Base: convert
+import SymEngine: convert, free_symbols
 
 """
    is_linearcombination(L::Basic)
@@ -17,7 +17,7 @@ Return whether the expression `L` is a linear combination of its symbols.
 ### Examples
 
 ```jldoctest
-julia> import SX.is_linearcombination
+julia> using SX: is_linearcombination
 
 julia> is_linearcombination(:(2*x1 - 4))
 true
@@ -54,7 +54,7 @@ Return wheter the given expression corresponds to a halfspace.
 ### Examples
 
 ```jldoctest
-julia> import SX.is_halfspace
+julia> using SX: is_halfspace
 
 julia> all(is_halfspace.([:(x1 <= 0), :(x1 < 0), :(x1 > 0), :(x1 >= 0)]))
 true
@@ -111,7 +111,7 @@ Return wheter the given expression corresponds to a hyperplane.
 ### Examples
 
 ```jldoctest
-julia> import SX.is_hyperplane
+julia> using SX: is_hyperplane
 
 julia> is_hyperplane(:(x1 = 0))
 true
@@ -155,7 +155,7 @@ function is_hyperplane(expr::Expr)::Bool
 end
 
 """
-    convert(::Type{LazySets.HalfSpace{N}}, expr::Expr; vars=nothing) where {N}
+    convert(::Type{HalfSpace{N}}, expr::Expr; vars=nothing) where {N}
 
 Return a `LazySet.HalfSpace` given a symbolic expression that represents a halfspace.
 
@@ -172,33 +172,35 @@ A `HalfSpace`, in the form `ax <= b`.
 ### Examples
 
 ```jldoctest convert_halfspace
-julia> import SX.convert
+julia> using LazySets: HalfSpace
 
 julia> convert(HalfSpace, :(x1 <= -0.03))
-LazySets.HalfSpace{Float64}([1.0], -0.03)
+HalfSpace{Float64,Array{Float64,1}}([1.0], -0.03)
 
 julia> convert(HalfSpace, :(x1 < -0.03))
-LazySets.HalfSpace{Float64}([1.0], -0.03)
+HalfSpace{Float64,Array{Float64,1}}([1.0], -0.03)
 
 julia> convert(HalfSpace, :(x1 > -0.03))
-LazySets.HalfSpace{Float64}([-1.0], 0.03)
+HalfSpace{Float64,Array{Float64,1}}([-1.0], 0.03)
 
 julia> convert(HalfSpace, :(x1 >= -0.03))
-LazySets.HalfSpace{Float64}([-1.0], 0.03)
+HalfSpace{Float64,Array{Float64,1}}([-1.0], 0.03)
 
 julia> convert(HalfSpace, :(x1 + x2 <= 2*x4 + 6))
-LazySets.HalfSpace{Float64}([1.0, 1.0, -2.0], 6.0)
+HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, -2.0], 6.0)
 ```
 
 You can also specify the set of "ambient" variables, even if not
 all of them appear:
 
 ```jldoctest convert_halfspace
+julia> using SymEngine: Basic
+
 julia> convert(HalfSpace, :(x1 + x2 <= 2*x4 + 6), vars=Basic[:x1, :x2, :x3, :x4])
-LazySets.HalfSpace{Float64}([1.0, 1.0, 0.0, -2.0], 6.0)
+HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, 0.0, -2.0], 6.0)
 ```
 """
-function convert(::Type{LazySets.HalfSpace{N}}, expr::Expr; vars::Vector{SymEngine.Basic}=Basic[]) where {N}
+function convert(::Type{HalfSpace{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
 
     @assert is_halfspace(expr) "the expression :(expr) does not correspond to a halfspace"
 
@@ -228,10 +230,10 @@ function convert(::Type{LazySets.HalfSpace{N}}, expr::Expr; vars::Vector{SymEngi
 end
 
 # type-less default halfspace conversion
-convert(::Type{LazySets.HalfSpace}, expr::Expr; vars::Vector{SymEngine.Basic}=Basic[]) = convert(LazySets.HalfSpace{Float64}, expr; vars=vars)
+convert(::Type{HalfSpace}, expr::Expr; vars::Vector{Basic}=Basic[]) = convert(HalfSpace{Float64}, expr; vars=vars)
 
 """
-    convert(::Type{LazySets.Hyperplane{N}}, expr::Expr; vars=nothing) where {N}
+    convert(::Type{Hyperplane{N}}, expr::Expr; vars=nothing) where {N}
 
 Return a `LazySet.Hyperplane` given a symbolic expression that represents a hyperplane.
 
@@ -248,27 +250,29 @@ A `Hyperplane`, in the form `ax = b`.
 ### Examples
 
 ```jldoctest convert_hyperplane
-julia> import SX.convert
+julia> using LazySets: Hyperplane
 
 julia> convert(Hyperplane, :(x1 = -0.03))
-LazySets.Hyperplane{Float64}([1.0], -0.03)
+Hyperplane{Float64}([1.0], -0.03)
 
 julia> convert(Hyperplane, :(x1 + 0.03 = 0))
-LazySets.Hyperplane{Float64}([1.0], -0.03)
+Hyperplane{Float64}([1.0], -0.03)
 
 julia> convert(Hyperplane, :(x1 + x2 = 2*x4 + 6))
-LazySets.Hyperplane{Float64}([1.0, 1.0, -2.0], 6.0)
+Hyperplane{Float64}([1.0, 1.0, -2.0], 6.0)
 ```
 
 You can also specify the set of "ambient" variables in the hyperplane, even if not
 all of them appear:
 
 ```jldoctest convert_hyperplane
+julia> using SymEngine: Basic
+
 julia> convert(Hyperplane, :(x1 + x2 = 2*x4 + 6), vars=Basic[:x1, :x2, :x3, :x4])
-LazySets.Hyperplane{Float64}([1.0, 1.0, 0.0, -2.0], 6.0)
+Hyperplane{Float64}([1.0, 1.0, 0.0, -2.0], 6.0)
 ```
 """
-function convert(::Type{LazySets.Hyperplane{N}}, expr::Expr; vars::Vector{SymEngine.Basic}=Basic[]) where {N}
+function convert(::Type{Hyperplane{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
 
     @assert is_hyperplane(expr) "the expression :(expr) does not correspond to a Hyperplane"
 
@@ -294,10 +298,10 @@ function convert(::Type{LazySets.Hyperplane{N}}, expr::Expr; vars::Vector{SymEng
 end
 
 # type-less default Hyperplane conversion
-convert(::Type{LazySets.Hyperplane}, expr::Expr; vars::Vector{SymEngine.Basic}=Basic[]) = convert(LazySets.Hyperplane{Float64}, expr; vars=vars)
+convert(::Type{Hyperplane}, expr::Expr; vars::Vector{Basic}=Basic[]) = convert(Hyperplane{Float64}, expr; vars=vars)
 
 """
-    free_symbols(expr::Expr, set_type::Type{LazySets.LazySet})
+    free_symbols(expr::Expr, set_type::Type{LazySet})
 
 Return the free symbols in an expression that represents a given set type.
 
@@ -311,8 +315,10 @@ A list of symbols, in the form of SymEngine `Basic` objects.
 
 ### Examples
 
-```jldoctest free_symbols
-julia> import SX.free_symbols
+```jldoctest
+julia> using SX: free_symbols
+
+julia> using LazySets: HalfSpace
 
 julia> free_symbols(:(x1 <= -0.03), HalfSpace)
 1-element Array{SymEngine.Basic,1}:
@@ -325,13 +331,13 @@ julia> free_symbols(:(x1 + x2 <= 2*x4 + 6), HalfSpace)
  x4
 ```
 """
-function free_symbols(expr::Expr, set_type::Type{<:LazySets.HalfSpace})
+function free_symbols(expr::Expr, set_type::Type{<:HalfSpace})
     # get sides of the inequality
     lhs, rhs = convert(Basic, expr.args[2]), convert(Basic, expr.args[3])
     return free_symbols(lhs - rhs)
 end
 
-function free_symbols(expr::Expr, set_type::Type{<:LazySets.Hyperplane})
+function free_symbols(expr::Expr, set_type::Type{<:Hyperplane})
     # get sides of the inequality
     lhs = convert(Basic, expr.args[1])
 
@@ -342,9 +348,9 @@ end
 
 function free_symbols(expr::Expr)
     if is_hyperplane(expr)
-        return free_symbols(expr, LazySets.HyperPlane)
+        return free_symbols(expr, HyperPlane)
     elseif is_halfspace(expr)
-        return free_symbols(expr, LazySets.Halfspace)
+        return free_symbols(expr, Halfspace)
     else
         error("the free symbols for the expression $(expr) is not implemented")
     end
