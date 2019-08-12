@@ -51,7 +51,7 @@ Vector of expressions, equations or inequalities.
 ### Examples
 
 ```jldoctest parse_sxmath
-julia> import SX.parse_sxmath
+julia> using SX: parse_sxmath
 
 julia> parse_sxmath("x >= 0")
 1-element Array{Expr,1}:
