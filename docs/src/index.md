@@ -1,11 +1,6 @@
 # SX.jl
 
-```@meta
-DocTestFilters = [r"[0-9\.]+ seconds \(.*\)"]
-```
-
 `SX` is a [Julia](http://julialang.org) package to read SpaceEx modeling files.
-
 
 The SpaceEx modeling language (SX) is a format for the mathematical description
 of hybrid dynamical systems. It has been described in
