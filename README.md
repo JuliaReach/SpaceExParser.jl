@@ -11,7 +11,7 @@
 ## Resources
 
 - [Manual](http://juliareach.github.io/SX.jl/latest/)
-- [Contributing](https://juliareach.github.io/SX.jl/latest/about.html#Contributing-1)
+- [Contributing](https://juliareach.github.io/SX.jl/latest/about/#Contributing-1)
 - [Release notes](https://github.com/JuliaReach/SX.jl/releases)
 - [Release notes of the development version](https://github.com/JuliaReach/SX.jl/wiki/Release-log-tracker)
 
