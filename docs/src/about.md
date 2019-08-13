@@ -31,7 +31,7 @@ lookup, e.g. `mforets/7`.
 This project is synchronized with Travis CI, such that each PR gets tested
 before merging (and the build is automatically triggered after each new commit).
 
-For the maintainability of this project, the tests suite should pass before a PR is merged.
+For the maintainability of this project, the test suite should pass before a PR is merged.
 To run the unit tests locally, you should do:
 
 ```julia
