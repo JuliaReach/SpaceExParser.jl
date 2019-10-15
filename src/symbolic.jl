@@ -93,7 +93,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
 
         # convert invariants to set representations
         _add_invariants!(X, U, invariants[id_location], state_variables, input_variables,
-                        (:location, id_location))
+                        (Val(:location), id_location))
 
         # NOTE: simplification of the invariants in the current location can
         # take place here
@@ -138,7 +138,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
 
         # convert guards to set representations
         _add_invariants!(Xr, Ur, guards[id_transition], local_state_variables, input_variables,
-                         (:transition, id_transition))
+                         (Val(:transition), id_transition))
 
         # if needed, concatenate the inputs with the constant terms
         if isaffine
