@@ -202,7 +202,7 @@ HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, 0.0, -2.0], 6.0)
 """
 function convert(::Type{HalfSpace{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
 
-    @assert is_halfspace(expr) "the expression :(expr) does not correspond to a halfspace"
+    @assert is_halfspace(expr) "the expression $expr does not correspond to a halfspace"
 
     # check sense of the inequality, assuming < or <= by default
     got_geq = expr.args[1] in [:(>=), :(>)]
@@ -274,7 +274,7 @@ Hyperplane{Float64}([1.0, 1.0, 0.0, -2.0], 6.0)
 """
 function convert(::Type{Hyperplane{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
 
-    @assert is_hyperplane(expr) "the expression :(expr) does not correspond to a Hyperplane"
+    @assert is_hyperplane(expr) "the expression $expr does not correspond to a hyperplane"
 
     # get sides of the inequality
     lhs = convert(Basic, expr.args[1])
@@ -354,4 +354,29 @@ function free_symbols(expr::Expr)
     else
         error("the free symbols for the expression $(expr) is not implemented")
     end
+end
+
+# conjunction of halfspaces, of the form a <= x <= b
+# (either with strict or non-strict inequalites, both are considered halfspaces
+function is_conjunction(expr::Expr)
+    # a <= x <= b has five arguments, and it should be a comparison
+    if (length(expr.args) != 5) | (expr.head != :comparison)
+        return false
+    end
+
+    lhs = Expr(:call, expr.args[2], expr.args[1], expr.args[3])
+    rhs = Expr(:call, expr.args[4], expr.args[3], expr.args[5])
+
+    return is_halfspace(lhs) && is_halfspace(rhs)
+end
+
+# create polyhedron from expression that determines
+# a conjunction of halfspaces
+function convert(::Type{<:HPolyhedron}, expr::Expr)
+    @assert is_conjunction(expr) "the expression $expr does not correspond to the conjunction of halfspaces"
+    lhs = Expr(:call, expr.args[2], expr.args[1], expr.args[3])
+    rhs = Expr(:call, expr.args[4], expr.args[3], expr.args[5])
+    Hleft = convert(HalfSpace, lhs)
+    Hright = convert(HalfSpace, rhs)
+    return HPolyhedron([Hleft, Hright])
 end
