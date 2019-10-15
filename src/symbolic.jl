@@ -191,10 +191,11 @@ end
 const STR_SET = "is neither a hyperplane nor a halfspace, and conversion from this set is not implemented"
 const STR_VAR = "contains a combination of state variables and input variables"
 
-error_msg_set(::Val{:invariant}, i, l) = error("invariant $i in location $l " * STR_SET)
-error_msg_set(::Val{:invariant}, i, l) = error("invariant $i in location $l " * STR_VAR)
-error_msg_var(::Val{:guard}, g, t) = error("guard $g in transition $t " * STR_SET)
-error_msg_var(::Val{:guard}, g, t) = error("guard $g in transition $t " * STR_VAR)
+error_msg_set(::Val{:location}, i, l) = error("invariant $i in location $l " * STR_SET)
+error_msg_var(::Val{:location}, i, l) = error("invariant $i in location $l " * STR_VAR)
+
+error_msg_set(::Val{:transition}, g, t) = error("guard $g in transition $t " * STR_SET)
+error_msg_var(::Val{:transition}, g, t) = error("guard $g in transition $t " * STR_VAR)
 
 # ref_tuple is used for the error message
 function _add_invariants!(X, U, invariants, state_variables, input_variables, ref_tuple)
