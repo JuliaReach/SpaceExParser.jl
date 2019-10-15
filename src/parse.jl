@@ -203,7 +203,7 @@ function parse_sxmodel!(root_sxmodel, HDict)
     for component in eachelement(root_sxmodel)
         for field in eachelement(component)
             if nodename(field) == "param"
-                if field["type"] == "real"
+                if field["type"] == "real" || field["type"] == "bool"
                     id_variable += 1
                     add_variable!(HDict["variables"], field, id_variable)
                 elseif field["type"] == "label"
@@ -248,7 +248,7 @@ The updated vector of symbolic variables.
 Parameters can be either variable names (type "real") or labels (type "label").
 """
 function add_variable!(variables, field, id=1)
-    @assert field["type"] == "real"
+    @assert field["type"] == "real" || field["type"] == "bool"
 
     # d1 and d2 are the dimensions (d1=d2=1 for scalars)
     @assert field["d1"] == "1" && field["d2"] == "1"
@@ -305,7 +305,7 @@ function parse_location(field)
 
     # if it happens that no invariant (or no flow) is defined in the component,
     # then this function will return an empty list of expressions
-    invariant, flow = Expr[], Expr[]
+    invariant, flow = Expr[:()], Expr[:()]
     for element in eachelement(field)
         if nodename(element) == "invariant"
             invariant = parse_sxmath(nodecontent(element))

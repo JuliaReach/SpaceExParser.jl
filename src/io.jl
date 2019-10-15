@@ -1,5 +1,5 @@
 """
-    readsxmodel(file; raw_dict=false, ST=ConstrainedLinearControlContinuousSystem, N=Float64, kwargs...)
+    readsxmodel(file; raw_dict=false, ST=ConstrainedLinearControlContinuousSystem, kwargs...)
 
 Read a SX model file.
 
@@ -12,7 +12,6 @@ Read a SX model file.
                  `HybridSystem` with the given assumptions
 - `ST`        -- (optional, default: `nothing`) assumption for the type of mathematical
                  system for each mode
-- `N`         -- (optional, default: `Float64`) numeric type of the system's coefficients
 
 ### Output
 
@@ -71,7 +70,6 @@ These comments apply whenever `raw_dict=false`:
 """
 function readsxmodel(file; raw_dict=false,
                            ST=nothing,
-                           N=Float64,
                            kwargs...)
 
     # 1) Open XML and read number of components and locations
@@ -146,7 +144,7 @@ function readsxmodel(file; raw_dict=false,
 
     elseif ST == ConstrainedLinearControlContinuousSystem
         # 2) Use a custom system type and symbolic representations
-        (modes, resetmaps) = linearHS(HDict; N=N, kwargs...)
+        (modes, resetmaps) = linearHS(HDict; kwargs...)
     else
         error("the system type $(ST) is not supported")
     end
