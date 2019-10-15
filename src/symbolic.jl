@@ -1,9 +1,9 @@
-export get_coeffs
+const NUM = Float64 # hard-coded numeric tye for the expressions' coefficients
 
 """
-linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
-                STD=ConstrainedLinearControlDiscreteSystem,
-                N=Float64, kwargs...)
+    linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
+             STD=ConstrainedLinearControlDiscreteSystem,
+             kwargs...)
 
 Convert the given hybrid system objects into a concrete system type for each node,
 and Julia expressions into SymEngine symbolic expressions.
@@ -15,7 +15,6 @@ and Julia expressions into SymEngine symbolic expressions.
              assumption for the type of mathematical system for each mode
 - `STD`   -- (optional, default: `ConstrainedLinearControlDiscreteSystem`)
               assumption for the type of mathematical system for the assignments and guards
-- `N`     -- (optional, default: `Float64`) numeric type of the system's coefficients
 
 ### Output
 
@@ -40,7 +39,7 @@ The tuple `(modes, resetmaps)`.
 """
 function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
                          STD=ConstrainedLinearControlDiscreteSystem,
-                         N=Float64, kwargs...)
+                         kwargs...)
 
     variables = HDict["variables"]
     invariants = HDict["invariants"]
@@ -68,11 +67,11 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
     for id_location in eachindex(flows)
 
         # vector of input sets; can be bigger if there are constant inputs
-        U = Vector{LazySet{N}}() # FIXME : use an intersection array?
+        U = Vector{LazySet{NUM}}() # FIXME : use an intersection array?
         # should be a vector of vectors (one for each location)
 
         # vector of state constraints
-        X = Vector{LazySet{N}}() # FIXME : use an intersection array?
+        X = Vector{LazySet{NUM}}() # FIXME : use an intersection array?
         # should be a vector of vectors (one for each location)
 
         # dimension of the state space for this location
@@ -81,74 +80,31 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
         # variables that are in the flow equations for this location
         local_state_variables = convert.(Basic, [fi.args[1].args[1] for fi in flows[id_location]])
 
-        # dynamics matrix
-        A = Matrix{N}(undef, n, n)
+        # in general local state variable are the same for all distinct
+        # modes in a hybrid automaton. they may change if different hybrid models
+        # are composed, so let's assume this here:
+        @assert local_state_variables == state_variables
 
-        # forcing terms
-        B = Matrix{N}(undef, n, m)
-        C = zeros(N, n) # constant terms
-
-        # track if there are constant terms
+        # track if there are constant terms in this mode
         isaffine = false
 
-        # loop over each flow equation for this location
-        for (i, fi) in enumerate(flows[id_location])
-
-            # FIXME maybe add a check for hyperplane, since we are with
-            # ST = ConstrainedLinearControlContinuousSystem
-
-            # we are treating an equality x_i' = f(x, ...)
-            @assert fi.head == :(=) "equality symbol expected in flow equation, found $(fi.head)"
-
-            # fi.args[1] is the subject of the equation, and fi.args[2] the right-hand side
-            RHS = convert(Basic, fi.args[2])
-
-            # constant terms (TODO: do we need to use subs?) use SymEngine.free_symbols ?
-            # TODO: use another approach, without the splat? (for efficiency)
-            const_term = subs(RHS, [xi=>zero(N) for xi in local_state_variables]...,
-                                   [ui=>zero(N) for ui in input_variables]...)
-            if const_term != zero(N)
-                C[i] = const_term
-                isaffine = true
-            end
-            # terms linear in the state variables
-            ex = diff.(RHS, local_state_variables)
-            A[i, :] = convert.(N, ex) # needs ex to be numeric, otherwise an error is prompted
-
-            # terms linear in the input variables
-            ex = diff.(RHS, input_variables)
-            B[i, :] = convert.(N, ex) # needs ex to be numeric, otherwise an error is prompted
-        end
+        A, B, c = _get_coeffs(flows[id_location], n, m, state_variables, input_variables)
+        isaffine = !iszero(c)
 
         # convert invariants to set representations
-        for (i, invi) = enumerate(invariants[id_location])
-            if is_hyperplane(invi)
-                set_type = Hyperplane{N}
-            elseif is_halfspace(invi)
-                set_type = HalfSpace{N}
-            else
-                error("invariant $(invi) in location $(id_location) is neither a hyperplane nor a halfspace, and conversion from this set is not implemented")
-            end
+        _add_invariants!(X, U, invariants[id_location], state_variables, input_variables,
+                        (:location, id_location))
 
-            vars = free_symbols(invi, set_type)
-            if all(si in local_state_variables for si in vars)
-                h = convert(set_type, invi, vars=local_state_variables)
-                push!(X, h)
-            elseif all(si in input_variables for si in vars)
-                h = convert(set_type, invi, vars=input_variables)
-                push!(U, h)
-            else
-                error("invariant $(invi) in location $(id_location) contains a combination of state variables and input variables, and conversion to a system of type $(ST) is not possible")
-            end
-        end
+        # NOTE: simplification of the invariants in the current location can
+        # take place here
 
         # if needed, concatenate the inputs with the constant terms
         if isaffine
-            B = hcat(B, C)
+            B = hcat(B, c)
             if !isempty(U)
-                U = [Singleton([one(N)]) * Ui for Ui in U]
+                U = [Singleton([one(NUM)]) * Ui for Ui in U]
             else
-                U = [Singleton([one(N)])]
+                U = [Singleton([one(NUM)])]
             end
         end
 
@@ -158,120 +114,114 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
     # reset maps (assignments, guards) for each transition (equations)
     resetmaps = Vector{STD}(undef, ntransitions)
 
-    for id_transition in eachindex(assignments)
-
+    for (id_transition, assign) in enumerate(assignments)
         # input constraints for the reset maps
-        Ur = Vector{LazySet{N}}() # FIXME : use an intersection array
+        Ur = Vector{LazySet{NUM}}() # FIXME : use an intersection array
         # should be a vector of vectors (one for each transition)
 
         # state constraints for the reset maps
-        Xr = Vector{LazySet{N}}() # FIXME : use an intersection array
+        Xr = Vector{LazySet{NUM}}() # FIXME : use an intersection array
         # should be a vector of vectors (one for each transition)
 
         # dimension of the state space for this transition
-        n = length(assignments[id_transition])
+        n = length(assign)
 
-        # variables that are in the flow equations for this location
-        local_state_variables = convert.(Basic, [ai.args[1].args[1] for ai in assignments[id_transition]])
-
-        # dynamics matrix
-        Ar = Matrix{N}(undef, n, n)
-
-        # forcing terms
-        Br = Matrix{N}(undef, n, m)
-        Cr = zeros(N, n) # constant terms
+        # variables that are in the assignments equations for this location
+        # FIXME : change local_state_variables name, does it need to match state_variables?
+        local_state_variables = convert.(Basic, [ai.args[1].args[1] for ai in assign])
 
         # track if there are constant terms
         isaffine = false
 
-        # loop over each assignment equation for this transition
-        for (i, ai) in enumerate(assignments[id_transition])
-
-            # we are treating an equality x_i' = f(x, ...)
-            @assert ai.head == :(=)
-
-            # fi.args[1] is the subject of the equation, and fi.args[2] the right-hand side
-            RHS = convert(Basic, ai.args[2])
-
-            # constant terms (TODO: do we need to use subs?) use SymEngine.free_symbols ?
-            const_term = subs(RHS, [xi=>zero(N) for xi in local_state_variables]...,
-                                   [ui=>zero(N) for ui in input_variables]...)
-            if const_term != zero(N)
-                Cr[i] = const_term
-                isaffine = true
-            end
-            # terms linear in the state variables
-            ex = diff.(RHS, local_state_variables)
-            Ar[i, :] = convert.(N, ex) # needs ex to be numeric, otherwise an error is prompted
-
-            # terms linear in the input variables
-            ex = diff.(RHS, input_variables)
-            Br[i, :] = convert.(N, ex) # needs ex to be numeric, otherwise an error is prompted
-        end
+        Ar, Br, cr = _get_coeffs(assign, n, m, local_state_variables, input_variables)
+        isaffine = !iszero(cr)
 
         # convert guards to set representations
-        for (i, gi) = enumerate(guards[id_transition])
-            if is_hyperplane(gi)
-                set_type = Hyperplane{N}
-            elseif is_halfspace(gi)
-                set_type = HalfSpace{N}
-            else
-                error("guard $(gi) in transition $(id_transition) is neither a hyperplane nor a halfspace, and conversion from this set is not implemented")
-            end
-
-            vars = free_symbols(gi, set_type)
-            if all(si in local_state_variables for si in vars)
-                h = convert(set_type, gi, vars=local_state_variables)
-                push!(Xr, h)
-            elseif all(si in input_variables for si in vars)
-                h = convert(set_type, gi, vars=input_variables)
-                push!(Ur, h)
-            else
-                error("guard $(gi) in transition $(id_transition) contains a combination of state variables and input variables, and conversion to a system of type $(ST) is not possible")
-            end
-        end
+        _add_invariants!(Xr, Ur, guards[id_transition], local_state_variables, input_variables,
+                         (:transition, id_transition))
 
         # if needed, concatenate the inputs with the constant terms
         if isaffine
-            Br = hcat(Br, Cr)
+            Br = hcat(Br, cr)
             if !isempty(Ur)
-                Ur = [Singleton([one(N)]) * Ui for Ui in Ur]
+                Ur = [Singleton([one(NUM)]) * Ui for Ui in Ur]
             else
-                Ur = [Singleton([one(N)])]
+                Ur = [Singleton([one(NUM)])]
             end
         end
 
         resetmaps[id_transition] = STD(Ar, Br, Xr, Ur)
     end
 
-
     return (modes, resetmaps)
 end
 
-# x' = Ax + Bu + c
-function get_coeffs(flow, n, m, state_vars, input_vars)
-    
-    A = Matrix{Float64}(undef, n, n)
-    B = Matrix{Float64}(undef, n, m)
-    c = zeros(Float64, n)
+# parse the coefficients for the system x' = Ax + Bu + c
+function _get_coeffs(flow, n, m, state_variables, input_variables)
 
-    for (i, fi) in enumerate(flow)
-        #println(fi)
+    A = Matrix{NUM}(undef, n, n)
+    B = Matrix{NUM}(undef, n, m)
+    c = zeros(NUM, n)
+
+    # loop over each flow equation
+    @inbounds for (i, fi) in enumerate(flow)
+        # we expect an equation xi' = f(x1, ..., xi, ..., xn)
+        @assert fi.head == :(=) "equality expected in flow or reset map, found $(fi.head)"
+
+        # fi.args[1] is the subject of the equation, fi.args[2] is the right-hand side
         RHS = convert(Basic, fi.args[2])
-        #println(RHS)
-        #println()
-        const_term = subs(RHS, [xi=>0.0 for xi in state_vars]...,
-                               [ui=>0.0 for ui in input_vars]...)
 
-        if const_term != 0.0
-            C[i] = const_term
-            isaffine = true
+        # constant term (if it exists)
+        zeroed_state_terms = [xi => zero(NUM) for xi in state_variables]
+        zeroed_input_terms = [ui => zero(NUM) for ui in input_variables]
+        const_term = subs(RHS, zeroed_state_terms..., zeroed_input_terms...)
+        if const_term != zero(NUM)
+            c[i] = const_term
         end
+
         # terms linear in the *state* variables
-        A[i, :] = convert.(Float64, diff.(RHS, state_vars))
+        A[i, :] = convert.(NUM, diff.(RHS, state_variables))
 
         # terms linear in the *input* variables
-        B[i, :] = convert.(Float64, diff.(RHS, input_vars))
+        B[i, :] = convert.(NUM, diff.(RHS, input_variables))
     end
     return A, B, c
+end
+
+const STR_SET = "is neither a hyperplane nor a halfspace, and conversion from this set is not implemented"
+const STR_VAR = "contains a combination of state variables and input variables"
+
+error_msg_set(::Val{:invariant}, i, l) = error("invariant $i in location $l " * STR_SET)
+error_msg_set(::Val{:invariant}, i, l) = error("invariant $i in location $l " * STR_VAR)
+error_msg_var(::Val{:guard}, g, t) = error("guard $g in transition $t " * STR_SET)
+error_msg_var(::Val{:guard}, g, t) = error("guard $g in transition $t " * STR_VAR)
+
+# ref_tuple is used for the error message
+function _add_invariants!(X, U, invariants, state_variables, input_variables, ref_tuple)
+
+    for (i, invi) = enumerate(invariants)
+        if is_hyperplane(invi)
+            set_type = Hyperplane{NUM}
+        elseif is_halfspace(invi)
+            set_type = HalfSpace{NUM}
+        else
+            inv_or_grd, loc_or_trans = ref_tuple
+            error_msg_set(inv_or_grd, invi, loc_or_trans)
+        end
+
+        vars = free_symbols(invi, set_type)
+        got_state_invariant = all(si in state_variables for si in vars)
+        got_input_invariant = all(si in input_variables for si in vars)
+        if got_state_invariant
+            h = convert(set_type, invi, vars=state_variables)
+            push!(X, h)
+        elseif got_input_invariant
+            h = convert(set_type, invi, vars=input_variables)
+            push!(U, h)
+        else
+            # combination of state variables and input variables
+            loc_or_trans, inv_or_grd = ref_tuple
+            error_msg_var(loc_or_trans, invi, inv_or_grd)
+        end
+    end
 end
