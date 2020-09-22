@@ -1,6 +1,6 @@
 # Methods
 
-This section describes systems methods implemented in `SX.jl`.
+This section describes systems methods implemented in `SpaceExParser.jl`.
 
 ```@contents
 Pages = ["methods.md"]
@@ -8,7 +8,7 @@ Depth = 3
 ```
 
 ```@meta
-CurrentModule = SX
+CurrentModule = SpaceExParser
 ```
 
 ### Input/Output
@@ -18,7 +18,7 @@ readsxmodel
 linearHS
 ```
 
-### Parsing the SX language
+### Parsing the SpaceExParser language
 
 ```@docs
 count_locations_and_transitions

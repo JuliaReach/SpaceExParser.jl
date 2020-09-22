@@ -1,11 +1,11 @@
 """
     readsxmodel(file; raw_dict=false, ST=ConstrainedLinearControlContinuousSystem, kwargs...)
 
-Read a SX model file.
+Read a SpaceExParser model file.
 
 ### Input
 
-- `file`      -- the filename of the SX file (in XML format)
+- `file`      -- the filename of the SpaceExParser file (in XML format)
 - `raw_dict`  -- (optional, default: `false`) if `true`, return the raw dictionary with
                  the objects that define the model (see Output below), without
                  actually returning a `HybridSystem`; otherwise, instantiate a
@@ -15,7 +15,7 @@ Read a SX model file.
 
 ### Output
 
-Hybrid system that corresponds to the given SX model and the given assumptions
+Hybrid system that corresponds to the given SpaceExParser model and the given assumptions
 on the system type if `raw_dict=true`; otherwise, a dictionary with the Julia
 expression objects that define the model. The keys of this dictionary are:
 
@@ -87,7 +87,7 @@ function readsxmodel(file; raw_dict=false,
     # keep the 1st component
     nlocations, ntransitions = nlocations_vector[1], ntransitions_vector[1]
 
-    # 2) Parse SX model and make the dictionary of Julia expressions
+    # 2) Parse SpaceExParser model and make the dictionary of Julia expressions
     # ==============================================================
 
     # hybrid automaton with the given number of locations

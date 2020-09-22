@@ -1,4 +1,4 @@
-using Test, SX, HybridSystems, MathematicalSystems
+using Test, SpaceExParser, HybridSystems, MathematicalSystems
 
 include("unit_examples.jl")
 include("unit_parse.jl")

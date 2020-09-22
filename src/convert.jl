@@ -17,7 +17,7 @@ Return whether the expression `L` is a linear combination of its symbols.
 ### Examples
 
 ```jldoctest
-julia> using SX: is_linearcombination
+julia> using SpaceExParser: is_linearcombination
 
 julia> is_linearcombination(:(2*x1 - 4))
 true
@@ -54,7 +54,7 @@ Return wheter the given expression corresponds to a halfspace.
 ### Examples
 
 ```jldoctest
-julia> using SX: is_halfspace
+julia> using SpaceExParser: is_halfspace
 
 julia> all(is_halfspace.([:(x1 <= 0), :(x1 < 0), :(x1 > 0), :(x1 >= 0)]))
 true
@@ -111,7 +111,7 @@ Return wheter the given expression corresponds to a hyperplane.
 ### Examples
 
 ```jldoctest
-julia> using SX: is_hyperplane
+julia> using SpaceExParser: is_hyperplane
 
 julia> is_hyperplane(:(x1 = 0))
 true
@@ -316,7 +316,7 @@ A list of symbols, in the form of SymEngine `Basic` objects.
 ### Examples
 
 ```jldoctest
-julia> using SX: free_symbols
+julia> using SpaceExParser: free_symbols
 
 julia> using LazySets: HalfSpace
 

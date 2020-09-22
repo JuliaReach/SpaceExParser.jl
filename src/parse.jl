@@ -8,7 +8,7 @@ Returns the number of locations and transitions for each component.
 
 ### Input
 
-- `root_sxmodel` -- the root element of a SX file
+- `root_sxmodel` -- the root element of a SpaceExParser file
 
 ### Output
 
@@ -40,7 +40,7 @@ end
 """
     parse_sxmath(s; assignment=false)
 
-Returns the list of expressions corresponding to a given SX string.
+Returns the list of expressions corresponding to a given SpaceExParser string.
 
 ### Input
 
@@ -54,7 +54,7 @@ Vector of expressions, equations or inequalities.
 ### Examples
 
 ```jldoctest parse_sxmath
-julia> using SX: parse_sxmath
+julia> using SpaceExParser: parse_sxmath
 
 julia> parse_sxmath("x >= 0")
 1-element Array{Expr,1}:

@@ -1,10 +1,10 @@
-using Documenter, SX
+using Documenter, SpaceExParser
 
-DocMeta.setdocmeta!(SX, :DocTestSetup, :(using SX); recursive=true)
+DocMeta.setdocmeta!(SpaceExParser, :DocTestSetup, :(using SpaceExParser); recursive=true)
 
 makedocs(
-    sitename = "SX.jl",
-    modules = [SX],
+    sitename = "SpaceExParser.jl",
+    modules = [SpaceExParser],
     format = Documenter.HTML(
         prettyurls = get(ENV, "CI", nothing) == "true",
         assets = ["assets/juliareach.css"]),
@@ -18,5 +18,5 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/JuliaReach/SX.jl.git"
+    repo = "github.com/JuliaReach/SpaceExParser.jl.git"
 )

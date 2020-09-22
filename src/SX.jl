@@ -1,6 +1,6 @@
 __precompile__(true)
 
-module SX
+module SpaceExParser
 
 #=========================================
 Load dependencies
@@ -16,7 +16,7 @@ export readsxmodel
 include("io.jl")
 
 #=========================
-Parsing SX files
+Parsing SpaceExParser files
 ==========================#
 include("parse.jl")
 

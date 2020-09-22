@@ -4,7 +4,7 @@ using EzXML
                  <param name="x" type="real" d1="1" d2="1" local="false" dynamics="any" controlled="true" />
                  """)
     vars = Dict()
-    SX.add_variable!(vars, root(X))
+    SpaceExParser.add_variable!(vars, root(X))
     @test collect(keys(vars)) == [:x]
     @test vars[:x]["local"] == false
     @test vars[:x]["controlled"] == true
