@@ -15,10 +15,6 @@
 - [Release notes](https://github.com/JuliaReach/SpaceExParser.jl/releases)
 - [Release notes of the development version](https://github.com/JuliaReach/SpaceExParser.jl/wiki/Release-log-tracker)
 
-## Dependencies
-
-This package relies on the interfaces defined in [HybridSystems.jl](https://github.com/blegat/HybridSystems.jl) and [MathematicalSystems.jl](https://github.com/JuliaReach/MathematicalSystems.jl). To handle XML files, we use [EzXML.jl](https://github.com/bicycle1885/EzXML.jl). Symbolic algebraic manipulations are performed with [SymEngine](https://github.com/symengine/SymEngine.jl). 
-
 ## Installing
 
 This package requires Julia v1.0 or later. Refer to the
@@ -31,6 +27,8 @@ To install the package `SpaceExParser`, use the following command inside Julia's
 using Pkg
 Pkg.clone("https://github.com/JuliaReach/SpaceExParser.jl")
 ```
+
+*Dependencies*. This package relies on the interfaces defined in [HybridSystems.jl](https://github.com/blegat/HybridSystems.jl) and [MathematicalSystems.jl](https://github.com/JuliaReach/MathematicalSystems.jl). To handle XML files, we use [EzXML.jl](https://github.com/bicycle1885/EzXML.jl). Symbolic algebraic manipulations are performed with [SymEngine](https://github.com/symengine/SymEngine.jl). 
 
 ## Usage
 
