@@ -32,10 +32,5 @@ using Pkg
 Pkg.clone("https://github.com/JuliaReach/SpaceExParser.jl")
 ```
 
-## Updating
+## Usage
 
-To checkout the latest (development) version, do:
-
-```julia
-Pkg.add(PackageSpec(url="https://github.com/JuliaReach/SpaceExParser.jl", rev="master"))
-```
