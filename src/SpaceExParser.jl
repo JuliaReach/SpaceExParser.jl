@@ -26,4 +26,10 @@ Converting symbolic expressions and systems types
 include("convert.jl")
 include("symbolic.jl")
 
+#==========================
+Writing systems to new file
+===========================#
+export writesxmodel
+include("write.jl")
+
 end # module
