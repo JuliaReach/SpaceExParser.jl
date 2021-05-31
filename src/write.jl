@@ -70,12 +70,16 @@ function _write_component(io, system, dictionary, indentation)
     _write_indented(io, "</component>\n", indentation)
 end
 
-function _write_parameters(io, system::LinearContinuousSystem, dictionary,
-                           indentation)
+function _write_parameters(io,
+                           system::Union{LinearContinuousSystem,
+                                         ConstrainedLinearContinuousSystem},
+                           dictionary, indentation)
     _write_linear_system(io, system, dictionary, indentation)
 end
 
-function _write_parameters(io, system::LinearControlContinuousSystem,
+function _write_parameters(io,
+                           system::Union{LinearControlContinuousSystem,
+                                         ConstrainedLinearControlContinuousSystem},
                            dictionary, indentation)
     _write_linear_system(io, system, dictionary, indentation)
 
@@ -123,7 +127,68 @@ function _write_invariant(io, system, dictionary, indentation)
         # nothing to write
         return
     end
-    throw(ArgumentError("constrained systems are currently not supported"))
+
+    _write_indented(io, "<invariant>", indentation)
+    indent!(indentation)
+
+    X = stateset(system)
+    if X != nothing
+        _write_invariant_states_specific(io, system, X, dictionary, indentation)
+    end
+
+    U = inputset(system)
+    if U != nothing
+        _write_invariant_inputs_specific(io, system, U, dictionary, indentation)
+    end
+
+    dedent!(indentation)
+    write(io, "</invariant>\n")
+end
+
+function _write_invariant_states_specific(io, system, X, dictionary, indentation)
+    println("WARNING: state constraints of type $(typeof(X)) are currenctly " *
+        "not supported and will be ignored")
+end
+
+function _write_invariant_states_specific(io, system, X::Universe, dictionary,
+                                          indentation)
+    # nothing to write
+end
+
+function _write_invariant_states_specific(io, system, X::AbstractHyperrectangle,
+                                          dictionary, indentation)
+    for i in 1:dim(X)
+        xi = _variable_name(i, dictionary)
+        l = low(X, i)
+        u = high(X, i)
+        if i > 1
+            write(io, " &amp; ")
+        end
+        write(io, "$l &lt;= $xi &amp; $xi &lt;= $u")
+    end
+end
+
+function _write_invariant_inputs_specific(io, system, U, dictionary, indentation)
+    println("WARNING: input constraints of type $(typeof(U)) are currenctly " *
+        "not supported and will be ignored")
+end
+
+function _write_invariant_inputs_specific(io, system, U::Universe, dictionary,
+                                          indentation)
+    # nothing to write
+end
+
+function _write_invariant_inputs_specific(io, system, U::AbstractHyperrectangle,
+                                          dictionary, indentation)
+    for i in 1:dim(U)
+        ui = _input_name(i, dictionary)
+        l = low(U, i)
+        u = high(U, i)
+        if i > 1
+            write(io, " &amp; ")
+        end
+        write(io, "$l &lt;= $ui &amp; $ui &lt;= $u")
+    end
 end
 
 function _write_flow(io, system, dictionary, indentation)
@@ -133,20 +198,16 @@ function _write_flow(io, system, dictionary, indentation)
 end
 
 function _write_flow_specific(io,
-                              system::Union{LinearContinuousSystem, LinearControlContinuousSystem},
+                              system::Union{LinearContinuousSystem,
+                                            LinearControlContinuousSystem,
+                                            ConstrainedLinearContinuousSystem,
+                                            ConstrainedLinearControlContinuousSystem},
                               dictionary)
     A = state_matrix(system)
-    n = size(A, 1)
-    if n != size(A, 2)
-        throw(ArgumentError("got a system matrix of dimension $n × $(size(A, 2))"))
-    end
+    n = statedim(system)
 
     B = input_matrix(system)  # returns `nothing` for systems with no inputs
-    m = (B == nothing) ? 0 : size(B, 2)
-    if m > 0 && size(B, 1) != n
-        throw(ArgumentError("got an input matrix of dimension $(size(B, 1)) × $m " *
-            "that is incompatible with a state matrix of dimension $n × $n"))
-    end
+    m = inputdim(system)
 
     for i in 1:n
         xi = _variable_name(i, dictionary)
