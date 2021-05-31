@@ -1,7 +1,7 @@
 name = "SpaceExParser"
 uuid = "2e6cc458-d83e-591d-8542-f3776f70ceb9"
 authors = ["mforets <mforets@gmail.com>"]
-version = "0.3.1"
+version = "0.4.0"
 
 [compat]
 julia = "1.0"
