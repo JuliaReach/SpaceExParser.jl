@@ -54,4 +54,4 @@ These persons have contributed to `SpaceExParser.jl` (in alphabetic order):
 
 - [Marcelo Forets](http://mforets.github.io)
 - Nikos Kekatos
-- [Christian Schilling](http://schillic.github.io)
+- [Christian Schilling](https://www.christianschilling.net/)
