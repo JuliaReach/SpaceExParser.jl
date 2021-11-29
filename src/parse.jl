@@ -57,16 +57,16 @@ Vector of expressions, equations or inequalities.
 julia> using SpaceExParser: parse_sxmath
 
 julia> parse_sxmath("x >= 0")
-1-element Array{Expr,1}:
+1-element Vector{Expr}:
  :(x >= 0)
 
 julia> parse_sxmath("x' == x & v' == -0.75*v")
-2-element Array{Expr,1}:
+2-element Vector{Expr}:
  :(x' = x)
  :(v' = -0.75v)
 
 julia> parse_sxmath("x == 0 & v <= 0")
-2-element Array{Expr,1}:
+2-element Vector{Expr}:
  :(x = 0)
  :(v <= 0)
 ```
@@ -75,7 +75,7 @@ Parentheses are ignored:
 
 ```jldoctest parse_sxmath
 julia> parse_sxmath("(x == 0) & (v <= 0)")
-2-element Array{Expr,1}:
+2-element Vector{Expr}:
  :(x = 0)
  :(v <= 0)
 ```
@@ -84,7 +84,7 @@ Splitting is also performend over double ampersand symbols:
 
 ```jldoctest parse_sxmath
 julia> parse_sxmath("x == 0 && v <= 0")
-2-element Array{Expr,1}:
+2-element Vector{Expr}:
  :(x = 0)
  :(v <= 0)
 ```
@@ -93,7 +93,7 @@ If you want to parse an assignment, use the `assignment` flag:
 
 ```jldoctest parse_sxmath
 julia> parse_sxmath("x := -x*0.1", assignment=true)
-1-element Array{Expr,1}:
+1-element Vector{Expr}:
  :(x = -x * 0.1)
 ```
 
@@ -101,11 +101,11 @@ julia> parse_sxmath("x := -x*0.1", assignment=true)
 
 ```jldoctest parse_sxmath
 julia> parse_sxmath("(t <= 125 & y>= -100)")
-2-element Array{Expr,1}:
+2-element Vector{Expr}:
  :(t <= 125)
  :(y >= -100)
 julia> parse_sxmath("t <= 125 & (y>= -100)")
-2-element Array{Expr,1}:
+2-element Vector{Expr}:
  :(t <= 125)
  :(y >= -100)
 ```
