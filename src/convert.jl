@@ -175,19 +175,19 @@ A `HalfSpace`, in the form `ax <= b`.
 julia> using LazySets: HalfSpace
 
 julia> convert(HalfSpace, :(x1 <= -0.03))
-HalfSpace{Float64,Array{Float64,1}}([1.0], -0.03)
+HalfSpace{Float64, Vector{Float64}}([1.0], -0.03)
 
 julia> convert(HalfSpace, :(x1 < -0.03))
-HalfSpace{Float64,Array{Float64,1}}([1.0], -0.03)
+HalfSpace{Float64, Vector{Float64}}([1.0], -0.03)
 
 julia> convert(HalfSpace, :(x1 > -0.03))
-HalfSpace{Float64,Array{Float64,1}}([-1.0], 0.03)
+HalfSpace{Float64, Vector{Float64}}([-1.0], 0.03)
 
 julia> convert(HalfSpace, :(x1 >= -0.03))
-HalfSpace{Float64,Array{Float64,1}}([-1.0], 0.03)
+HalfSpace{Float64, Vector{Float64}}([-1.0], 0.03)
 
 julia> convert(HalfSpace, :(x1 + x2 <= 2*x4 + 6))
-HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, -2.0], 6.0)
+HalfSpace{Float64, Vector{Float64}}([1.0, 1.0, -2.0], 6.0)
 ```
 
 You can also specify the set of "ambient" variables, even if not
@@ -197,7 +197,7 @@ all of them appear:
 julia> using SymEngine: Basic
 
 julia> convert(HalfSpace, :(x1 + x2 <= 2*x4 + 6), vars=Basic[:x1, :x2, :x3, :x4])
-HalfSpace{Float64,Array{Float64,1}}([1.0, 1.0, 0.0, -2.0], 6.0)
+HalfSpace{Float64, Vector{Float64}}([1.0, 1.0, 0.0, -2.0], 6.0)
 ```
 """
 function convert(::Type{HalfSpace{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
@@ -253,13 +253,13 @@ A `Hyperplane`, in the form `ax = b`.
 julia> using LazySets: Hyperplane
 
 julia> convert(Hyperplane, :(x1 = -0.03))
-Hyperplane{Float64,Array{Float64,1}}([1.0], -0.03)
+Hyperplane{Float64, Vector{Float64}}([1.0], -0.03)
 
 julia> convert(Hyperplane, :(x1 + 0.03 = 0))
-Hyperplane{Float64,Array{Float64,1}}([1.0], -0.03)
+Hyperplane{Float64, Vector{Float64}}([1.0], -0.03)
 
 julia> convert(Hyperplane, :(x1 + x2 = 2*x4 + 6))
-Hyperplane{Float64,Array{Float64,1}}([1.0, 1.0, -2.0], 6.0)
+Hyperplane{Float64, Vector{Float64}}([1.0, 1.0, -2.0], 6.0)
 ```
 
 You can also specify the set of "ambient" variables in the hyperplane, even if not
@@ -269,7 +269,7 @@ all of them appear:
 julia> using SymEngine: Basic
 
 julia> convert(Hyperplane, :(x1 + x2 = 2*x4 + 6), vars=Basic[:x1, :x2, :x3, :x4])
-Hyperplane{Float64,Array{Float64,1}}([1.0, 1.0, 0.0, -2.0], 6.0)
+Hyperplane{Float64, Vector{Float64}}([1.0, 1.0, 0.0, -2.0], 6.0)
 ```
 """
 function convert(::Type{Hyperplane{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
@@ -321,11 +321,11 @@ julia> using SpaceExParser: free_symbols
 julia> using LazySets: HalfSpace
 
 julia> free_symbols(:(x1 <= -0.03), HalfSpace)
-1-element Array{SymEngine.Basic,1}:
+1-element Vector{SymEngine.Basic}:
  x1
 
 julia> free_symbols(:(x1 + x2 <= 2*x4 + 6), HalfSpace)
-3-element Array{SymEngine.Basic,1}:
+3-element Vector{SymEngine.Basic}:
  x2
  x1
  x4
