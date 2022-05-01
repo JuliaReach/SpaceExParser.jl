@@ -18,6 +18,10 @@ function MathematicalSystems.inputdim(H::HybridSystem)
     return maximum(ms)
 end
 
+function MathematicalSystems.isconstrained(X::LazySet)
+    return !isuniversal(X)
+end
+
 function MathematicalSystems.isconstrained(v::AbstractVector{<:LazySet})
     return !all(isuniversal, v)
 end
