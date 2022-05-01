@@ -421,12 +421,21 @@ function _write_assignment(io, H, transition, dictionary, indentation)
         return  # nothing to write
     end
 
-    A = state_matrix(asgn)
-    B = input_matrix(asgn)
-    if !iszero(B)
-        warn("only linear assignments are supported at the moment")
-    end
     n = statedim(H)
+    if asgn isa AbstractMap
+        if (asgn isa IdentityMap) || (asgn isa ConstrainedIdentityMap)
+            return  # nothing to write
+        elseif (asgn isa LinearMap) || (asgn isa ConstrainedLinearMap)
+            A = asgn.A
+        else
+            warn("only linear assignments are supported at the moment")
+        end
+    else
+        A = state_matrix(asgn)
+        if !iszero(input_matrix(asgn))
+            warn("only linear assignments are supported at the moment")
+        end
+    end
 
     _write_indented(io, "<assignment>", indentation)
     for i in 1:n
