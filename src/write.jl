@@ -425,7 +425,7 @@ function _write_assignment(io, H, transition, dictionary, indentation)
     if asgn isa AbstractMap
         if (asgn isa IdentityMap) || (asgn isa ConstrainedIdentityMap)
             return  # nothing to write
-        elseif (asgn isa LinearMap) || (asgn isa ConstrainedLinearMap)
+        elseif (asgn isa MathematicalSystems.LinearMap) || (asgn isa ConstrainedLinearMap)
             A = asgn.A
         else
             warn("only linear assignments are supported at the moment")
