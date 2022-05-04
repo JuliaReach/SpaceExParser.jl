@@ -5,7 +5,7 @@
 function MathematicalSystems.statedim(H::HybridSystem)
     ns = [statedim(H, i) for i in 1:nmodes(H)]
     if !all(==(ns[1]), ns)
-        warn("the number of state dimensions differs across locations")
+        @warn("the number of state dimensions differs across locations")
     end
     return maximum(ns)
 end
@@ -13,7 +13,7 @@ end
 function MathematicalSystems.inputdim(H::HybridSystem)
     ms = [inputdim(H, i) for i in 1:nmodes(H)]
     if !all(==(ms[1]), ms)
-        warn("the number of input dimensions differs across locations")
+        @warn("the number of input dimensions differs across locations")
     end
     return maximum(ms)
 end
@@ -428,12 +428,12 @@ function _write_assignment(io, H, transition, dictionary, indentation)
         elseif (asgn isa MathematicalSystems.LinearMap) || (asgn isa ConstrainedLinearMap)
             A = asgn.A
         else
-            warn("only linear assignments are supported at the moment")
+            @warn("only linear assignments are supported at the moment")
         end
     else
         A = state_matrix(asgn)
         if !iszero(input_matrix(asgn))
-            warn("only linear assignments are supported at the moment")
+            @warn("only linear assignments are supported at the moment")
         end
     end
 
