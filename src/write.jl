@@ -427,6 +427,20 @@ function _write_assignment(io, H, transition, dictionary, indentation)
             return  # nothing to write
         elseif (asgn isa MathematicalSystems.LinearMap) || (asgn isa ConstrainedLinearMap)
             A = asgn.A
+            c = zeros(n)
+        elseif (asgn isa MathematicalSystems.AffineMap) || (asgn isa ConstrainedAffineMap)
+            A = asgn.A
+            c = asgn.c
+        elseif (asgn isa MathematicalSystems.ResetMap) || (asgn isa ConstrainedResetMap)
+            A = zeros(n, n)
+            c = zeros(n)
+            @inbounds for i in 1:n
+                if i in keys(asgn.dict)
+                    c[i] = asgn.dict[i]
+                else
+                    A[i, i] = 1.0
+                end
+            end
         else
             @warn("only linear assignments are supported at the moment")
         end
@@ -462,6 +476,23 @@ function _write_assignment(io, H, transition, dictionary, indentation)
                 end
             end
             write(io, "$prefix$(abs(Aij)) * $xj")
+            first = false
+        end
+        if c[i] != 0
+            if c[i] < 0
+                if first
+                    prefix = "-"
+                else
+                    prefix = " - "
+                end
+            else
+                if first
+                    prefix = ""
+                else
+                    prefix = " + "
+                end
+            end
+            write(io, "$prefix$(abs(c[i]))")
             first = false
         end
         if first
