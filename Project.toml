@@ -1,6 +1,6 @@
 name = "SpaceExParser"
 uuid = "2e6cc458-d83e-591d-8542-f3776f70ceb9"
-version = "0.4.0"
+version = "0.4.1"
 
 [deps]
 DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
@@ -14,7 +14,7 @@ SymEngine = "123dc426-2d89-5057-bbad-38513e3affd8"
 [compat]
 DataStructures = "0"
 EzXML = "1"
-HybridSystems = "0.3"
+HybridSystems = "0.4"
 LazySets = "1"
 MathematicalSystems = "0.11"
 Reexport = "0.2, 1"
