@@ -131,7 +131,7 @@ function readsxmodel(file; raw_dict=false,
         return HDict
     end
 
-    if ST == nothing
+    if isnothing(ST)
         modes = Vector{Tuple{Vector{Expr},Vector{Expr}}}()
         for i in eachindex(flows)
             push!(modes, (flows[i], invariants[i]))

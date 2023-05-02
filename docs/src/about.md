@@ -34,7 +34,7 @@ before merging (and the build is automatically triggered after each new commit).
 For the maintainability of this project, the test suite should pass before a PR is merged.
 To run the unit tests locally, you should do:
 
-```julia
+```bash
 $ julia --color=yes test/runtests.jl
 ```
 
@@ -44,7 +44,7 @@ This documentation is written in Markdown, and it relies on
 [Documenter.jl](https://github.com/JuliaDocs/Documenter.jl) to produce the HTML
 layout. To build the docs, run `make.jl`:
 
-```julia
+```bash
 $ julia --color=yes docs/make.jl
 ```
 
