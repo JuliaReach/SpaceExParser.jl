@@ -18,7 +18,7 @@ end
     @test ntransitions(H) == 0
 
     flow, invariant = H.modes[1][1], H.modes[1][2]
-    @test flow == [:(x' = y), :(y' = -x + (1 - x ^ 2) * y)]
+    @test flow == [:(x' = y), :(y' = -x + (1 - x^2) * y)]
     @test invariant == [:(x <= 0), :(y >= 0)]
 end
 

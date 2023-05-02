@@ -33,7 +33,7 @@ false
 ```
 """
 function is_linearcombination(L::Basic)
-    all(isempty.(free_symbols.(diff.(L, free_symbols(L)))))
+    return all(isempty.(free_symbols.(diff.(L, free_symbols(L)))))
 end
 
 is_linearcombination(L::Expr) = is_linearcombination(convert(Basic, L))
@@ -201,7 +201,6 @@ HalfSpace{Float64, Vector{Float64}}([1.0, 1.0, 0.0, -2.0], 6.0)
 ```
 """
 function convert(::Type{HalfSpace{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
-
     @assert is_halfspace(expr) "the expression :(expr) does not correspond to a halfspace"
 
     # check sense of the inequality, assuming < or <= by default
@@ -230,7 +229,9 @@ function convert(::Type{HalfSpace{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) 
 end
 
 # type-less default halfspace conversion
-convert(::Type{HalfSpace}, expr::Expr; vars::Vector{Basic}=Basic[]) = convert(HalfSpace{Float64}, expr; vars=vars)
+function convert(::Type{HalfSpace}, expr::Expr; vars::Vector{Basic}=Basic[])
+    return convert(HalfSpace{Float64}, expr; vars=vars)
+end
 
 """
     convert(::Type{Hyperplane{N}}, expr::Expr; vars=nothing) where {N}
@@ -273,14 +274,14 @@ Hyperplane{Float64, Vector{Float64}}([1.0, 1.0, 0.0, -2.0], 6.0)
 ```
 """
 function convert(::Type{Hyperplane{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
-
     @assert is_hyperplane(expr) "the expression :(expr) does not correspond to a Hyperplane"
 
     # get sides of the inequality
     lhs = convert(Basic, expr.args[1])
 
     # treats the 4 in :(2*x1 = 4)
-    rhs = :args in fieldnames(typeof(expr.args[2])) ? convert(Basic, expr.args[2].args[2]) : convert(Basic, expr.args[2])
+    rhs = :args in fieldnames(typeof(expr.args[2])) ? convert(Basic, expr.args[2].args[2]) :
+          convert(Basic, expr.args[2])
 
     # a1 x1 + ... + an xn + K = 0
     eq = lhs - rhs
@@ -298,7 +299,9 @@ function convert(::Type{Hyperplane{N}}, expr::Expr; vars::Vector{Basic}=Basic[])
 end
 
 # type-less default Hyperplane conversion
-convert(::Type{Hyperplane}, expr::Expr; vars::Vector{Basic}=Basic[]) = convert(Hyperplane{Float64}, expr; vars=vars)
+function convert(::Type{Hyperplane}, expr::Expr; vars::Vector{Basic}=Basic[])
+    return convert(Hyperplane{Float64}, expr; vars=vars)
+end
 
 """
     free_symbols(expr::Expr, set_type::Type{LazySet})
@@ -342,7 +345,8 @@ function free_symbols(expr::Expr, set_type::Type{<:Hyperplane})
     lhs = convert(Basic, expr.args[1])
 
     # treats the 4 in :(2*x1 = 4)
-    rhs = :args in fieldnames(typeof(expr.args[2])) ? convert(Basic, expr.args[2].args[2]) : convert(Basic, expr.args[2])
+    rhs = :args in fieldnames(typeof(expr.args[2])) ? convert(Basic, expr.args[2].args[2]) :
+          convert(Basic, expr.args[2])
     return free_symbols(lhs - rhs)
 end
 

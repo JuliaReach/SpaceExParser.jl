@@ -69,8 +69,8 @@ These comments apply whenever `raw_dict=false`:
    the vector of tuples `(assignments, guards)`.
 """
 function readsxmodel(file; raw_dict=false,
-                           ST=nothing,
-                           kwargs...)
+                     ST=nothing,
+                     kwargs...)
 
     # 1) Open XML and read number of components and locations
     # =======================================================
@@ -94,7 +94,7 @@ function readsxmodel(file; raw_dict=false,
     automaton = GraphAutomaton(nlocations)
 
     # ditionary with variables names and their properties
-    variables = OrderedDict{Symbol, Dict{String, Any}}()
+    variables = OrderedDict{Symbol,Dict{String,Any}}()
 
     # set of labels for the transitions
     transitionlabels = Set{String}()
@@ -114,16 +114,16 @@ function readsxmodel(file; raw_dict=false,
 
     switchings = Vector{AbstractSwitching}(undef, ntransitions)
 
-    HDict = Dict("automaton"=>automaton,
-                 "variables"=>variables,
-                 "transitionlabels"=>transitionlabels,
-                 "invariants"=>invariants,
-                 "flows"=>flows,
-                 "assignments"=>assignments,
-                 "guards"=>guards,
-                 "switchings"=>switchings,
-                 "nlocations"=>nlocations,
-                 "ntransitions"=>ntransitions)
+    HDict = Dict("automaton" => automaton,
+                 "variables" => variables,
+                 "transitionlabels" => transitionlabels,
+                 "invariants" => invariants,
+                 "flows" => flows,
+                 "assignments" => assignments,
+                 "guards" => guards,
+                 "switchings" => switchings,
+                 "nlocations" => nlocations,
+                 "ntransitions" => ntransitions)
 
     parse_sxmodel!(root_sxmodel, HDict)
 
@@ -132,14 +132,14 @@ function readsxmodel(file; raw_dict=false,
     end
 
     if ST == nothing
-        modes = Vector{Tuple{Vector{Expr}, Vector{Expr}}}()
+        modes = Vector{Tuple{Vector{Expr},Vector{Expr}}}()
         for i in eachindex(flows)
-           push!(modes, (flows[i], invariants[i]))
+            push!(modes, (flows[i], invariants[i]))
         end
 
-        resetmaps = Vector{Tuple{Vector{Expr}, Vector{Expr}}}()
+        resetmaps = Vector{Tuple{Vector{Expr},Vector{Expr}}}()
         for i in eachindex(assignments)
-           push!(resetmaps, (assignments[i], guards[i]))
+            push!(resetmaps, (assignments[i], guards[i]))
         end
 
     elseif ST == ConstrainedLinearControlContinuousSystem
@@ -150,7 +150,7 @@ function readsxmodel(file; raw_dict=false,
     end
 
     # extension field
-    ext = Dict{Symbol, Any}()
+    ext = Dict{Symbol,Any}()
     ext[:variables] = variables
     ext[:transitionlabels] = transitionlabels
 

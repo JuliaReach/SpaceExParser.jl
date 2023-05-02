@@ -29,7 +29,7 @@ However, note that the flattening process changes the original model and may ind
 The aforementioned problems would yield errors/warnings when parsed.
 
 ```
-1. ERROR | in component 'osc_w_4th_order' the string 'osc.osci.hop'  
+1. ERROR | in component 'osc_w_4th_order' the string 'osc.osci.hop'
 doesn't match NAME pattern [a-zA-Z_][a-zA-Z0-9_]* >>> element
 label removed
 

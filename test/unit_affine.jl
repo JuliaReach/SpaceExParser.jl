@@ -2,7 +2,7 @@ using LazySets
 AFFINE_SYSTEM = ConstrainedLinearControlContinuousSystem
 
 @testset "Bouncing ball" begin
-    H = readsxmodel("../examples/bball/bball_flattened.xml", ST=AFFINE_SYSTEM)
+    H = readsxmodel("../examples/bball/bball_flattened.xml"; ST=AFFINE_SYSTEM)
 
     @test nmodes(H) == 1
     @test ntransitions(H) == 1

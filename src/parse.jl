@@ -133,7 +133,6 @@ whenever it is found that there are unbalanced parentheses after the expression 
 splitted into subexpressions.
 """
 function parse_sxmath(s; assignment=false)
-
     count_left_parentheses = s -> count(c -> c == '(', collect(s))
     count_right_parentheses = s -> count(c -> c == ')', collect(s))
     @assert count_left_parentheses(s) == count_right_parentheses(s) "the expression $(s) is not well formed"
@@ -156,7 +155,7 @@ function parse_sxmath(s; assignment=false)
         elseif m > n && expri[1] == '('
             expr[i] = expri[2:end]
         elseif m < n && expri[end] == ')'
-            expr[i] = expri[1:end-1]
+            expr[i] = expri[1:(end - 1)]
         else
             error("malformed subexpression $(expri)")
         end
@@ -258,10 +257,10 @@ function add_variable!(variables, field, id=1)
     iscontrolled = haskey(field, "controlled") ? _parse_s(field["controlled"]) : true
     dynamicstype = haskey(field, "dynamics") ? field["dynamics"] : "any"
 
-    variables[varname] = Dict("local"=>islocal,
-                              "controlled"=>iscontrolled,
-                              "dynamics"=>dynamicstype,
-                              "id"=>id)
+    variables[varname] = Dict("local" => islocal,
+                              "controlled" => iscontrolled,
+                              "dynamics" => dynamicstype,
+                              "id" => id)
     return variables
 end
 
@@ -348,7 +347,7 @@ function parse_transition(field)
         if nodename(element) == "guard"
             G = parse_sxmath(nodecontent(element))
         elseif nodename(element) == "assignment"
-            A = parse_sxmath(nodecontent(element), assignment=true)
+            A = parse_sxmath(nodecontent(element); assignment=true)
         else
             @warn("field $(nodename(element)) in transition $(field["source"]) → $(field["target"]) is ignored")
         end
