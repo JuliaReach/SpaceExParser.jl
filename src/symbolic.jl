@@ -38,9 +38,8 @@ The tuple `(modes, resetmaps)`.
    mapped to half-spaces.
 """
 function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
-                         STD=ConstrainedLinearControlDiscreteSystem,
-                         kwargs...)
-
+                  STD=ConstrainedLinearControlDiscreteSystem,
+                  kwargs...)
     variables = HDict["variables"]
     invariants = HDict["invariants"]
     flows = HDict["flows"]
@@ -51,11 +50,11 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
 
     # in this point it is defined which variables are "state" and which are "input"
     for vi in keys(variables)
-       if variables[vi]["controlled"]
-           push!(state_variables, convert(Basic, vi))
-       else
-           push!(input_variables, convert(Basic, vi))
-       end
+        if variables[vi]["controlled"]
+            push!(state_variables, convert(Basic, vi))
+        else
+            push!(input_variables, convert(Basic, vi))
+        end
     end
     m = length(input_variables)
 
@@ -93,7 +92,7 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
 
         # convert invariants to set representations
         _add_invariants!(X, U, invariants[id_location], state_variables, input_variables,
-                        (Val(:location), id_location))
+                         (Val(:location), id_location))
 
         # NOTE: simplification of the invariants in the current location can
         # take place here
@@ -158,7 +157,6 @@ end
 
 # parse the coefficients for the system x' = Ax + Bu + c
 function _get_coeffs(flow, n, m, state_variables, input_variables)
-
     A = Matrix{NUM}(undef, n, n)
     B = Matrix{NUM}(undef, n, m)
     c = zeros(NUM, n)
@@ -199,8 +197,7 @@ error_msg_var(::Val{:transition}, g, t) = error("guard $g in transition $t " * S
 
 # ref_tuple is used for the error message
 function _add_invariants!(X, U, invariants, state_variables, input_variables, ref_tuple)
-
-    for (i, invi) = enumerate(invariants)
+    for (i, invi) in enumerate(invariants)
         if is_hyperplane(invi)
             set_type = Hyperplane{NUM}
         elseif is_halfspace(invi)
@@ -214,10 +211,10 @@ function _add_invariants!(X, U, invariants, state_variables, input_variables, re
         got_state_invariant = all(si in state_variables for si in vars)
         got_input_invariant = all(si in input_variables for si in vars)
         if got_state_invariant
-            h = convert(set_type, invi, vars=state_variables)
+            h = convert(set_type, invi; vars=state_variables)
             push!(X, h)
         elseif got_input_invariant
-            h = convert(set_type, invi, vars=input_variables)
+            h = convert(set_type, invi; vars=input_variables)
             push!(U, h)
         else
             # combination of state variables and input variables

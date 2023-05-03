@@ -41,15 +41,15 @@ mutable struct Indentation
 end
 
 function indent!(ind::Indentation)
-    ind.ind = ind.ind * ind.step
+    return ind.ind = ind.ind * ind.step
 end
 
 function dedent!(ind::Indentation)
-    ind.ind = ind.ind[1:end-(length(ind.step))]
+    return ind.ind = ind.ind[1:(end - (length(ind.step)))]
 end
 
 function _write_indented(io, string, indentation)
-    write(io, "$(indentation.ind)$string")
+    return write(io, "$(indentation.ind)$string")
 end
 
 function _dedent(indentation)
@@ -61,11 +61,11 @@ end
 # ==============
 
 function _variable_name(id, dictionary)
-    get(dictionary, id, "x" * string(id))
+    return get(dictionary, id, "x" * string(id))
 end
 
 function _input_name(id, dictionary)
-    get(dictionary, id, "u" * string(id))
+    return get(dictionary, id, "u" * string(id))
 end
 
 # ======================
@@ -75,20 +75,19 @@ end
 function writesxmodel(filename, system; dictionary=Dict())
     open(filename, "w") do io
         write(io,
-"<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n" * 
-"<sspaceex xmlns=\"http://www-verimag.imag.fr/xml-namespaces/sspaceex\" version=\"0.2\" math=\"SpaceEx\">\n"
-        )
+              "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n" *
+              "<sspaceex xmlns=\"http://www-verimag.imag.fr/xml-namespaces/sspaceex\" version=\"0.2\" math=\"SpaceEx\">\n")
         indentation = Indentation()
         indent!(indentation)
         _write_system(io, system, dictionary, indentation)
         dedent!(indentation)
-        write(io, "</sspaceex>\n")
+        return write(io, "</sspaceex>\n")
     end
-    nothing
+    return nothing
 end
 
 function _write_system(io, system, dictionary, indentation)
-    _write_component(io, system, dictionary, indentation)
+    return _write_component(io, system, dictionary, indentation)
 end
 
 function _write_component(io, system, dictionary, indentation)
@@ -98,12 +97,12 @@ function _write_component(io, system, dictionary, indentation)
     _write_locations(io, system, dictionary, indentation)
     _write_transitions(io, system, dictionary, indentation)
     dedent!(indentation)
-    _write_indented(io, "</component>\n", indentation)
+    return _write_indented(io, "</component>\n", indentation)
 end
 
 function _write_parameters(io, system, dictionary, indentation)
     _write_state_variables(io, system, dictionary, indentation)
-    _write_input_variables(io, system, dictionary, indentation)
+    return _write_input_variables(io, system, dictionary, indentation)
 end
 
 function _write_input_variables(io, system, dictionary, indentation)
@@ -125,14 +124,15 @@ function _write_state_variables(io, system, dictionary, indentation)
 end
 
 function _write_parameter(io, name, controlled, dictionary, indentation)
-    _write_indented(io, "<param name=\"$name\" type=\"real\" d1=\"1\" d2=\"1\" " *
-        "local=\"false\" dynamics=\"any\" controlled=\"$controlled\" />\n",
-        indentation)
+    return _write_indented(io,
+                           "<param name=\"$name\" type=\"real\" d1=\"1\" d2=\"1\" " *
+                           "local=\"false\" dynamics=\"any\" controlled=\"$controlled\" />\n",
+                           indentation)
 end
 
 function _write_locations(io, system::AbstractContinuousSystem, dictionary,
                           indentation)
-    _write_location(io, system, 1, dictionary, indentation)
+    return _write_location(io, system, 1, dictionary, indentation)
 end
 
 function _write_locations(io, system::HybridSystem, dictionary,
@@ -149,7 +149,7 @@ function _write_location(io, system, id, dictionary, indentation)
     _write_invariant(io, system, dictionary, indentation)
     _write_flow(io, system, dictionary, indentation)
     dedent!(indentation)
-    _write_indented(io, "</location>\n", indentation)
+    return _write_indented(io, "</location>\n", indentation)
 end
 
 function _write_invariant(io, system, dictionary, indentation)
@@ -171,12 +171,12 @@ function _write_invariant(io, system, dictionary, indentation)
     end
 
     dedent!(indentation)
-    write(io, "</invariant>\n")
+    return write(io, "</invariant>\n")
 end
 
 function _write_state_constraints_specific(io, system, X, dictionary, indentation)
-    println("WARNING: state constraints of type $(typeof(X)) are currenctly " *
-        "not supported and will be ignored")
+    return println("WARNING: state constraints of type $(typeof(X)) are currenctly " *
+                   "not supported and will be ignored")
 end
 
 function _write_state_constraints_specific(io, system, X::Universe, dictionary,
@@ -198,7 +198,7 @@ function _write_state_constraints_specific(io, system, X::AbstractHyperrectangle
 end
 
 function _write_state_constraints_specific(io, system,
-                                           H::Union{HalfSpace, Hyperplane},
+                                           H::Union{HalfSpace,Hyperplane},
                                            dictionary, indentation)
     first = true
     for (i, ai) in enumerate(H.a)
@@ -237,7 +237,7 @@ function _write_state_constraints_specific(io, system,
     if b == 0
         b = 0  # turns -0.0 into 0 (for aesthetic reasons only)
     end
-    write(io, " $operator $b")
+    return write(io, " $operator $b")
 end
 
 function _write_state_constraints_specific(io, system, X::AbstractVector{<:LazySet},
@@ -254,8 +254,8 @@ function _write_state_constraints_specific(io, system, X::AbstractVector{<:LazyS
 end
 
 function _write_input_constraints_specific(io, system, U, dictionary, indentation)
-    println("WARNING: input constraints of type $(typeof(U)) are currenctly " *
-        "not supported and will be ignored")
+    return println("WARNING: input constraints of type $(typeof(U)) are currenctly " *
+                   "not supported and will be ignored")
 end
 
 function _write_input_constraints_specific(io, system, U::Universe, dictionary,
@@ -279,7 +279,7 @@ end
 function _write_flow(io, system, dictionary, indentation)
     _write_indented(io, "<flow>", indentation)
     _write_flow_specific(io, system, dictionary)
-    write(io, "</flow>\n")
+    return write(io, "</flow>\n")
 end
 
 function _write_flow_specific(io,
@@ -398,7 +398,7 @@ function _write_transition(io, H::HybridSystem, transition, dictionary, indentat
     _write_guard(io, H, transition, dictionary, indentation)
     _write_assignment(io, H, transition, dictionary, indentation)
     dedent!(indentation)
-    _write_indented(io, "</transition>\n", indentation)
+    return _write_indented(io, "</transition>\n", indentation)
 end
 
 function _write_transition_label(io, H, transition, dictionary, indentation)
@@ -412,7 +412,7 @@ function _write_guard(io, H, transition, dictionary, indentation)
     end
     _write_indented(io, "<guard>", indentation)
     _write_state_constraints_specific(io, system, G, dictionary, indentation)
-    write(io, "</guard>\n")
+    return write(io, "</guard>\n")
 end
 
 function _write_assignment(io, H, transition, dictionary, indentation)
@@ -503,5 +503,5 @@ function _write_assignment(io, H, transition, dictionary, indentation)
             write(io, " &amp; ")
         end
     end
-    write(io, "</assignment>\n")
+    return write(io, "</assignment>\n")
 end
