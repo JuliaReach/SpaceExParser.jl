@@ -310,8 +310,8 @@ function parse_location(field)
             invariant = parse_sxmath(nodecontent(element))
         elseif nodename(element) == "flow"
             flow = parse_sxmath(nodecontent(element))
-	elseif nodename(element) in ["note"]
-	    # ignore these
+        elseif nodename(element) in ["note"]
+            # ignore these
         else
             @warn("field $(nodename(element)) in location $(field["id"]) is ignored")
         end
@@ -350,8 +350,8 @@ function parse_transition(field)
             G = parse_sxmath(nodecontent(element))
         elseif nodename(element) == "assignment"
             A = parse_sxmath(nodecontent(element); assignment=true)
-	elseif nodename(element) in ["labelposition", "label", "middlepoint"]
-	    # ignore these
+        elseif nodename(element) in ["labelposition", "label", "middlepoint"]
+            # ignore these
         else
             @warn("field $(nodename(element)) in transition $(field["source"]) → $(field["target"]) is ignored")
         end
