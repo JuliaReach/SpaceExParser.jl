@@ -15,8 +15,6 @@ If you like this package, consider contributing!
 
 If you have written code and would like it to be peer reviewed and added to the library, you can [fork](https://help.github.com/en/articles/fork-a-repo) the repository and send a pull request (see below). Typical contributions include fixing a bug, adding a new feature or improving the documentation (either in source code or the [online manual](https://juliareach.github.io/SpaceExParser.jl/latest/man/getting_started/)).
 
-You are also welcome to get in touch with us in the [JuliaReach gitter chat](https://gitter.im/JuliaReach/Lobby).
-
 Below we detail some general comments about contributing to this package. The [JuliaReach Developer's Documentation](https://juliareach.github.io/JuliaReachDevDocs/latest/) describes coding guidelines; take a look when in doubt about the coding style that is expected for the code that is finally merged into the library.
 
 ### Branches
