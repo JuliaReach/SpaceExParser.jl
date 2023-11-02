@@ -1,4 +1,4 @@
-const NUM = Float64 # hard-coded numeric tye for the expressions' coefficients
+const NUM = Float64 # hard-coded numeric type for the expressions' coefficients
 
 """
     linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
@@ -31,7 +31,7 @@ The tuple `(modes, resetmaps)`.
    evaluated to a numeric value`.
 3) We assume that inequalities in invariants are of the form `ax <= b` or `ax >= b`,
    where `b` is a scalar value. Other combinations are NOT yet supported.
-4) In inequalities, `x` is a vector of variables of two differens types only:
+4) In inequalities, `x` is a vector of variables of two different types only:
    either all of them are state variables, or all of them are input variables.
    Other combinations are not yet allowed.
 5) Strict and non-strict inequalities are treated as being the same: both are
@@ -186,7 +186,7 @@ function _get_coeffs(flow, n, m, state_variables, input_variables)
     return A, B, c
 end
 
-const STR_SET = "is neither a hyperplane nor a halfspace, and conversion from this set is not implemented"
+const STR_SET = "is neither a hyperplane nor a half-space, and conversion from this set is not implemented"
 const STR_VAR = "contains a combination of state variables and input variables"
 
 error_msg_set(::Val{:location}, i, l) = error("invariant $i in location $l " * STR_SET)

@@ -4,7 +4,7 @@ import SymEngine: convert, free_symbols
 """
    is_linearcombination(L::Basic)
 
-Return whether the expression `L` is a linear combination of its symbols.
+Determine whether the expression `L` is a linear combination of its symbols.
 
 ### Input
 
@@ -41,7 +41,7 @@ is_linearcombination(L::Expr) = is_linearcombination(convert(Basic, L))
 """
     is_halfspace(expr::Expr)
 
-Return wheter the given expression corresponds to a halfspace.
+Determine whether the given expression corresponds to a half-space.
 
 ### Input
 
@@ -49,7 +49,7 @@ Return wheter the given expression corresponds to a halfspace.
 
 ### Output
 
-`true` if `expr` corresponds to a halfspace or `false` otherwise.
+`true` if `expr` corresponds to a half-space or `false` otherwise.
 
 ### Examples
 
@@ -91,14 +91,14 @@ function is_halfspace(expr::Expr)::Bool
     # convert to symengine expressions
     lhs, rhs = convert(Basic, expr.args[2]), convert(Basic, expr.args[3])
 
-    # check if the expression defines a halfspace
+    # check if the expression defines a half-space
     return is_linearcombination(lhs) && is_linearcombination(rhs)
 end
 
 """
     is_hyperplane(expr::Expr)
 
-Return wheter the given expression corresponds to a hyperplane.
+Determine whether the given expression corresponds to a hyperplane.
 
 ### Input
 
@@ -106,7 +106,7 @@ Return wheter the given expression corresponds to a hyperplane.
 
 ### Output
 
-`true` if `expr` corresponds to a halfspace or `false` otherwise.
+`true` if `expr` corresponds to a half-space or `false` otherwise.
 
 ### Examples
 
@@ -157,7 +157,7 @@ end
 """
     convert(::Type{HalfSpace{N}}, expr::Expr; vars=nothing) where {N}
 
-Return a `LazySet.HalfSpace` given a symbolic expression that represents a halfspace.
+Return a `LazySet.HalfSpace` given a symbolic expression that represents a half-space.
 
 ### Input
 
@@ -201,7 +201,7 @@ HalfSpace{Float64, Vector{Float64}}([1.0, 1.0, 0.0, -2.0], 6.0)
 ```
 """
 function convert(::Type{HalfSpace{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) where {N}
-    @assert is_halfspace(expr) "the expression :(expr) does not correspond to a halfspace"
+    @assert is_halfspace(expr) "the expression :(expr) does not correspond to a half-space"
 
     # check sense of the inequality, assuming < or <= by default
     got_geq = expr.args[1] in [:(>=), :(>)]
@@ -228,7 +228,7 @@ function convert(::Type{HalfSpace{N}}, expr::Expr; vars::Vector{Basic}=Basic[]) 
     end
 end
 
-# type-less default halfspace conversion
+# type-less default half-space conversion
 function convert(::Type{HalfSpace}, expr::Expr; vars::Vector{Basic}=Basic[])
     return convert(HalfSpace{Float64}, expr; vars=vars)
 end

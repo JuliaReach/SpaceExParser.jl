@@ -175,7 +175,7 @@ function _write_invariant(io, system, dictionary, indentation)
 end
 
 function _write_state_constraints_specific(io, system, X, dictionary, indentation)
-    return println("WARNING: state constraints of type $(typeof(X)) are currenctly " *
+    return println("WARNING: state constraints of type $(typeof(X)) are currently " *
                    "not supported and will be ignored")
 end
 
@@ -254,7 +254,7 @@ function _write_state_constraints_specific(io, system, X::AbstractVector{<:LazyS
 end
 
 function _write_input_constraints_specific(io, system, U, dictionary, indentation)
-    return println("WARNING: input constraints of type $(typeof(U)) are currenctly " *
+    return println("WARNING: input constraints of type $(typeof(U)) are currently " *
                    "not supported and will be ignored")
 end
 

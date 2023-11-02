@@ -130,7 +130,7 @@ to `=`, but you need to set `assignment=true` for this replacement to take effec
 
 The characters `'('` and `')'` are deleted (replaced by the empty character),
 whenever it is found that there are unbalanced parentheses after the expression is
-splitted into subexpressions.
+split into subexpressions.
 """
 function parse_sxmath(s; assignment=false)
     count_left_parentheses = s -> count(c -> c == '(', collect(s))
@@ -183,7 +183,7 @@ The `HDict` dictionary.
 2) Location identifications ("id" field) are assumed to be integers.
 3) The switchings types are assumed to be autonomous. See Switching in *Systems
    and Control*, D. Liberzon, for further details on the classification of switchings.
-4) We add fresh varaibles for each component (`id_variable += 1`). In general
+4) We add fresh variables for each component (`id_variable += 1`). In general
    variables can be shared among components if the bindings are defined. Currently,
    we make the simplifying assumption that the model has only one component and
    we don't take bindings into account.
