@@ -7,7 +7,7 @@
 [dev-img]: https://img.shields.io/badge/docs-latest-blue.svg
 [dev-url]: https://juliareach.github.io/SpaceExParser.jl/dev/
 [ci-img]: https://github.com/JuliaReach/SpaceExParser.jl/workflows/CI/badge.svg
-[ci-url]: https://github.com/JuliaReach/SpaceExParser.jl/actions/workflows/ci.yml
+[ci-url]: https://github.com/JuliaReach/SpaceExParser.jl/actions/workflows/test-master.yml
 [cov-img]: https://codecov.io/github/JuliaReach/SpaceExParser.jl/coverage.svg
 [cov-url]: https://app.codecov.io/github/JuliaReach/SpaceExParser.jl
 [chat-img]: https://img.shields.io/badge/zulip-join_chat-brightgreen.svg
@@ -37,4 +37,4 @@ using Pkg
 Pkg.clone("https://github.com/JuliaReach/SpaceExParser.jl")
 ```
 
-*Dependencies*. This package relies on the interfaces defined in [HybridSystems.jl](https://github.com/blegat/HybridSystems.jl) and [MathematicalSystems.jl](https://github.com/JuliaReach/MathematicalSystems.jl). To handle XML files, we use [EzXML.jl](https://github.com/bicycle1885/EzXML.jl). Symbolic algebraic manipulations are performed with [SymEngine](https://github.com/symengine/SymEngine.jl). 
+*Dependencies*. This package relies on the interfaces defined in [HybridSystems.jl](https://github.com/blegat/HybridSystems.jl) and [MathematicalSystems.jl](https://github.com/JuliaReach/MathematicalSystems.jl). To handle XML files, we use [EzXML.jl](https://github.com/bicycle1885/EzXML.jl). Symbolic algebraic manipulations are performed with [SymEngine](https://github.com/symengine/SymEngine.jl).
