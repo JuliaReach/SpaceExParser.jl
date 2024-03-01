@@ -66,11 +66,11 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
     for id_location in eachindex(flows)
 
         # vector of input sets; can be bigger if there are constant inputs
-        U = Vector{LazySet{NUM}}() # FIXME : use an intersection array?
+        U = Vector{LazySet{NUM}}() # TODO use an intersection array?
         # should be a vector of vectors (one for each location)
 
         # vector of state constraints
-        X = Vector{LazySet{NUM}}() # FIXME : use an intersection array?
+        X = Vector{LazySet{NUM}}() # TODO use an intersection array?
         # should be a vector of vectors (one for each location)
 
         # dimension of the state space for this location
@@ -115,18 +115,18 @@ function linearHS(HDict; ST=ConstrainedLinearControlContinuousSystem,
 
     for (id_transition, assign) in enumerate(assignments)
         # input constraints for the reset maps
-        Ur = Vector{LazySet{NUM}}() # FIXME : use an intersection array
+        Ur = Vector{LazySet{NUM}}() # TODO use an intersection array
         # should be a vector of vectors (one for each transition)
 
         # state constraints for the reset maps
-        Xr = Vector{LazySet{NUM}}() # FIXME : use an intersection array
+        Xr = Vector{LazySet{NUM}}() # TODO use an intersection array
         # should be a vector of vectors (one for each transition)
 
         # dimension of the state space for this transition
         n = length(assign)
 
         # variables that are in the assignments equations for this location
-        # FIXME : change local_state_variables name, does it need to match state_variables?
+        # TODO change local_state_variables name, does it need to match state_variables?
         local_state_variables = convert.(Basic, [ai.args[1].args[1] for ai in assign])
 
         # track if there are constant terms
