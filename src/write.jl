@@ -52,10 +52,6 @@ function _write_indented(io, string, indentation)
     return write(io, "$(indentation.ind)$string")
 end
 
-function _dedent(indentation)
-    return
-end
-
 # ==============
 # Variable names
 # ==============
@@ -110,7 +106,7 @@ function _write_input_variables(io, system, dictionary, indentation)
     controlled = false
     for i in 1:m
         name = _input_name(i, dictionary)
-        _write_parameter(io, name, controlled, dictionary, indentation)
+        _write_parameter(io, name, controlled, indentation)
     end
 end
 
@@ -119,11 +115,11 @@ function _write_state_variables(io, system, dictionary, indentation)
     controlled = true
     for i in 1:n
         name = _variable_name(i, dictionary)
-        _write_parameter(io, name, controlled, dictionary, indentation)
+        _write_parameter(io, name, controlled, indentation)
     end
 end
 
-function _write_parameter(io, name, controlled, dictionary, indentation)
+function _write_parameter(io, name, controlled, indentation)
     return _write_indented(io,
                            "<param name=\"$name\" type=\"real\" d1=\"1\" d2=\"1\" " *
                            "local=\"false\" dynamics=\"any\" controlled=\"$controlled\" />\n",
@@ -174,18 +170,19 @@ function _write_invariant(io, system, dictionary, indentation)
     return write(io, "</invariant>\n")
 end
 
-function _write_state_constraints_specific(io, system, X, dictionary, indentation)
+function _write_state_constraints_specific(::IO, ::AbstractSystem, X, ::Dict,
+                                           ::Indentation)
     return println("WARNING: state constraints of type $(typeof(X)) are currently " *
                    "not supported and will be ignored")
 end
 
-function _write_state_constraints_specific(io, system, X::Universe, dictionary,
-                                           indentation)
+function _write_state_constraints_specific(::IO, ::AbstractSystem, ::Universe, ::Dict,
+                                           ::Indentation)
     # nothing to write
 end
 
-function _write_state_constraints_specific(io, system, X::AbstractHyperrectangle,
-                                           dictionary, indentation)
+function _write_state_constraints_specific(io::IO, ::AbstractSystem, X::AbstractHyperrectangle,
+                                           dictionary::Dict, ::Indentation)
     for i in 1:dim(X)
         xi = _variable_name(i, dictionary)
         l = low(X, i)
@@ -197,9 +194,9 @@ function _write_state_constraints_specific(io, system, X::AbstractHyperrectangle
     end
 end
 
-function _write_state_constraints_specific(io, system,
+function _write_state_constraints_specific(io::IO, ::AbstractSystem,
                                            H::Union{HalfSpace,Hyperplane},
-                                           dictionary, indentation)
+                                           dictionary::Dict, ::Indentation)
     first = true
     for (i, ai) in enumerate(H.a)
         if ai == 0
@@ -240,10 +237,10 @@ function _write_state_constraints_specific(io, system,
     return write(io, " $operator $b")
 end
 
-function _write_state_constraints_specific(io, system, X::AbstractVector{<:LazySet},
-                                           dictionary, indentation)
+function _write_state_constraints_specific(io::IO, system::Dict, X::AbstractVector{<:LazySet},
+                                           dictionary::Dict, indentation::Indentation)
     first = true
-    for (i, Xi) in enumerate(X)
+    for Xi in X
         if first
             first = false
         else
@@ -253,18 +250,18 @@ function _write_state_constraints_specific(io, system, X::AbstractVector{<:LazyS
     end
 end
 
-function _write_input_constraints_specific(io, system, U, dictionary, indentation)
+function _write_input_constraints_specific(::IO, system, U, dictionary, indentation)
     return println("WARNING: input constraints of type $(typeof(U)) are currently " *
                    "not supported and will be ignored")
 end
 
-function _write_input_constraints_specific(io, system, U::Universe, dictionary,
+function _write_input_constraints_specific(::IO, system, U::Universe, dictionary,
                                            indentation)
     # nothing to write
 end
 
-function _write_input_constraints_specific(io, system, U::AbstractHyperrectangle,
-                                           dictionary, indentation)
+function _write_input_constraints_specific(io::IO, ::AbstractSystem, U::AbstractHyperrectangle,
+                                           dictionary, ::Indentation)
     for i in 1:dim(U)
         ui = _input_name(i, dictionary)
         l = low(U, i)
@@ -378,7 +375,7 @@ function _write_flow_specific(io,
     end
 end
 
-function _write_transitions(io, system::AbstractContinuousSystem, dictionary,
+function _write_transitions(::IO, system::AbstractContinuousSystem, dictionary,
                             indentation)
     # nothing to write
 end
@@ -401,7 +398,7 @@ function _write_transition(io, H::HybridSystem, transition, dictionary, indentat
     return _write_indented(io, "</transition>\n", indentation)
 end
 
-function _write_transition_label(io, H, transition, dictionary, indentation)
+function _write_transition_label(args...)
     # labels are ignored
 end
 

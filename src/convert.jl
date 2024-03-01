@@ -334,13 +334,13 @@ julia> free_symbols(:(x1 + x2 <= 2*x4 + 6), HalfSpace)
  x4
 ```
 """
-function free_symbols(expr::Expr, set_type::Type{<:HalfSpace})
+function free_symbols(expr::Expr, ::Type{<:HalfSpace})
     # get sides of the inequality
     lhs, rhs = convert(Basic, expr.args[2]), convert(Basic, expr.args[3])
     return free_symbols(lhs - rhs)
 end
 
-function free_symbols(expr::Expr, set_type::Type{<:Hyperplane})
+function free_symbols(expr::Expr, ::Type{<:Hyperplane})
     # get sides of the inequality
     lhs = convert(Basic, expr.args[1])
 
