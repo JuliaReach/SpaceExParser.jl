@@ -7,7 +7,7 @@ Load dependencies
 =========================================#
 
 using DataStructures: OrderedDict
-using EzXML, HybridSystems, LazySets, MathematicalSystems, Reexport, SymEngine
+using EzXML, HybridSystems, LazySets, MathematicalSystems, SymEngine
 
 #=========================
 Input/Output functions
