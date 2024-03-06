@@ -1,28 +1,12 @@
-# ==============
-# API extensions
-# ==============
+# ===================
+# Auxiliary functions
+# ===================
 
-function MathematicalSystems.statedim(H::HybridSystem)
-    ns = [statedim(H, i) for i in 1:nmodes(H)]
-    if !all(==(ns[1]), ns)
-        @warn("the number of state dimensions differs across locations")
-    end
-    return maximum(ns)
-end
-
-function MathematicalSystems.inputdim(H::HybridSystem)
-    ms = [inputdim(H, i) for i in 1:nmodes(H)]
-    if !all(==(ms[1]), ms)
-        @warn("the number of input dimensions differs across locations")
-    end
-    return maximum(ms)
-end
-
-function MathematicalSystems.isconstrained(X::LazySet)
+function _isconstrained(X::LazySet)
     return !isuniversal(X)
 end
 
-function MathematicalSystems.isconstrained(v::AbstractVector{<:LazySet})
+function _isconstrained(v::AbstractVector{<:LazySet})
     return !all(isuniversal, v)
 end
 
@@ -149,7 +133,7 @@ function _write_location(io, system, id, dictionary, indentation)
 end
 
 function _write_invariant(io, system, dictionary, indentation)
-    if !isconstrained(system)
+    if !_isconstrained(system)
         return  # nothing to write
     end
 
@@ -404,7 +388,7 @@ end
 
 function _write_guard(io, H, transition, dictionary, indentation)
     G = guard(H, transition)
-    if !isconstrained(G)
+    if !_isconstrained(G)
         return  # nothing to write
     end
     _write_indented(io, "<guard>", indentation)
