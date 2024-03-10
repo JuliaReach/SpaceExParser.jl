@@ -8,7 +8,7 @@ Returns the number of locations and transitions for each component.
 
 ### Input
 
-- `root_sxmodel` -- the root element of a SpaceExParser file
+- `root_sxmodel` -- the root element of a SpaceEx file
 
 ### Output
 

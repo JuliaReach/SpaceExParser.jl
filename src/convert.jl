@@ -341,7 +341,7 @@ function free_symbols(expr::Expr, ::Type{<:HalfSpace})
 end
 
 function free_symbols(expr::Expr, ::Type{<:Hyperplane})
-    # get sides of the inequality
+    # get sides of the equality
     lhs = convert(Basic, expr.args[1])
 
     # treats the 4 in :(2*x1 = 4)
