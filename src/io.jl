@@ -57,7 +57,7 @@ Moreover, let us note that:
 7) The `resetmaps` field consists of the vector of tuples `(assignment, guard)`, for each
    location.
 
-These comments apply whenever `raw_dict=false`:
+These comments apply whenever `raw_dict=false`:
 
 1) The field `variables` is an ordered dictionary, where the order is given by the
    insertion order. This allows deterministic iteration over the dictionary,
