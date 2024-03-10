@@ -26,7 +26,7 @@ The tuple `(modes, resetmaps)`.
     for them), otherwise these are interpreted as input variables (there is not an
     ODE for them).
 2) If the system has nonlinearities, then some first order derivatives cannot
-   be evaluated to numbers, and this function does not apply. In that case, you
+   be evaluated to numbers, and this function does not apply. In that case, you
    will see the error message: `ArgumentError: symbolic value cannot be
    evaluated to a numeric value`.
 3) We assume that inequalities in invariants are of the form `ax <= b` or `ax >= b`,

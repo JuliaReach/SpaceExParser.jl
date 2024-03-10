@@ -37,4 +37,4 @@ using Pkg
 Pkg.clone("https://github.com/JuliaReach/SpaceExParser.jl")
 ```
 
-*Dependencies*. This package relies on the interfaces defined in [HybridSystems.jl](https://github.com/blegat/HybridSystems.jl) and [MathematicalSystems.jl](https://github.com/JuliaReach/MathematicalSystems.jl). To handle XML files, we use [EzXML.jl](https://github.com/bicycle1885/EzXML.jl). Symbolic algebraic manipulations are performed with [SymEngine](https://github.com/symengine/SymEngine.jl).
+*Dependencies*. This package relies on the interfaces defined in [HybridSystems.jl](https://github.com/blegat/HybridSystems.jl) and [MathematicalSystems.jl](https://github.com/JuliaReach/MathematicalSystems.jl). To handle XML files, we use [EzXML.jl](https://github.com/bicycle1885/EzXML.jl). Symbolic algebraic manipulations are performed with [SymEngine](https://github.com/symengine/SymEngine.jl).
