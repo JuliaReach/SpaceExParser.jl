@@ -1,21 +1,21 @@
 """
-    readsxmodel(file; raw_dict=false, ST=ConstrainedLinearControlContinuousSystem, kwargs...)
+    readsxmodel(file; [raw_dict]=false, [ST]=nothing, [kwargs]...)
 
-Read a SpaceExParser model file.
+Read a SpaceEx model file.
 
 ### Input
 
-- `file`      -- the filename of the SpaceExParser file (in XML format)
+- `file`      -- the filename of the SpaceEx file (in XML format)
 - `raw_dict`  -- (optional, default: `false`) if `true`, return the raw dictionary with
                  the objects that define the model (see Output below), without
                  actually returning a `HybridSystem`; otherwise, instantiate a
                  `HybridSystem` with the given assumptions
-- `ST`        -- (optional, default: `nothing`) assumption for the type of mathematical
+- `ST`        -- (optional, default: `nothing`) assumption for the type of
                  system for each mode
 
 ### Output
 
-Hybrid system that corresponds to the given SpaceExParser model and the given assumptions
+Hybrid system that corresponds to the given SpaceEx model and the given assumptions
 on the system type if `raw_dict=true`; otherwise, a dictionary with the Julia
 expression objects that define the model. The keys of this dictionary are:
 
@@ -68,12 +68,10 @@ These comments apply whenever `raw_dict=false`:
    each component being a list of expressions, and similarly the reset maps are
    the vector of tuples `(assignments, guards)`.
 """
-function readsxmodel(file; raw_dict=false,
-                     ST=nothing,
-                     kwargs...)
-
+function readsxmodel(file; raw_dict=false, ST=nothing, kwargs...)
     # 1) Open XML and read number of components and locations
     # =======================================================
+
     sxmodel = readxml(file)
     root_sxmodel = root(sxmodel)
 
@@ -87,8 +85,8 @@ function readsxmodel(file; raw_dict=false,
     # keep the 1st component
     nlocations, ntransitions = nlocations_vector[1], ntransitions_vector[1]
 
-    # 2) Parse SpaceExParser model and make the dictionary of Julia expressions
-    # ==============================================================
+    # 2) Parse SpaceEx model and create a dictionary of Julia expressions
+    # ===================================================================
 
     # hybrid automaton with the given number of locations
     automaton = GraphAutomaton(nlocations)
@@ -141,9 +139,8 @@ function readsxmodel(file; raw_dict=false,
         for i in eachindex(assignments)
             push!(resetmaps, (assignments[i], guards[i]))
         end
-
     elseif ST == ConstrainedLinearControlContinuousSystem
-        # 2) Use a custom system type and symbolic representations
+        # Use a custom system type and symbolic representations
         (modes, resetmaps) = linearHS(HDict; kwargs...)
     else
         error("the system type $(ST) is not supported")

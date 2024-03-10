@@ -15,9 +15,9 @@ Input/Output functions
 export readsxmodel
 include("io.jl")
 
-#=========================
-Parsing SpaceExParser files
-==========================#
+#====================
+Parsing SpaceEx files
+=====================#
 include("parse.jl")
 
 #================================================

@@ -5,8 +5,8 @@ const NUM = Float64 # hard-coded numeric type for the expressions' coefficients
              STD=ConstrainedLinearControlDiscreteSystem,
              kwargs...)
 
-Convert the given hybrid system objects into a concrete system type for each node,
-and Julia expressions into SymEngine symbolic expressions.
+Convert the given hybrid-system object into a concrete system type for each mode,
+and convert Julia expressions into SymEngine symbolic expressions.
 
 ### Input
 
@@ -186,25 +186,35 @@ function _get_coeffs(flow, n, m, state_variables, input_variables)
     return A, B, c
 end
 
-const STR_SET = "is neither a hyperplane nor a half-space, and conversion from this set is not implemented"
+const STR_SET = "is neither a hyperplane nor a half-space; conversion from this set is not implemented"
 const STR_VAR = "contains a combination of state variables and input variables"
 
-error_msg_set(::Val{:location}, i, l) = error("invariant $i in location $l " * STR_SET)
-error_msg_var(::Val{:location}, i, l) = error("invariant $i in location $l " * STR_VAR)
+function error_msg_set(::Val{:location}, i, l)
+    throw(ArgumentError("invariant $i of location $l " * STR_SET))
+end
 
-error_msg_set(::Val{:transition}, g, t) = error("guard $g in transition $t " * STR_SET)
-error_msg_var(::Val{:transition}, g, t) = error("guard $g in transition $t " * STR_VAR)
+function error_msg_var(::Val{:location}, i, l)
+    throw(ArgumentError("invariant $i of location $l " * STR_VAR))
+end
+
+function error_msg_set(::Val{:transition}, g, t)
+    throw(ArgumentError("guard $g of transition $t " * STR_SET))
+end
+
+function error_msg_var(::Val{:transition}, g, t)
+    throw(ArgumentError("guard $g of transition $t " * STR_VAR))
+end
 
 # ref_tuple is used for the error message
 function _add_invariants!(X, U, invariants, state_variables, input_variables, ref_tuple)
-    for (i, invi) in enumerate(invariants)
+    for invi in invariants
         if is_hyperplane(invi)
             set_type = Hyperplane{NUM}
         elseif is_halfspace(invi)
             set_type = HalfSpace{NUM}
         else
-            inv_or_grd, loc_or_trans = ref_tuple
-            error_msg_set(inv_or_grd, invi, loc_or_trans)
+            loc_or_trans, id = ref_tuple
+            error_msg_set(loc_or_trans, invi, id)
         end
 
         vars = free_symbols(invi, set_type)
@@ -218,8 +228,8 @@ function _add_invariants!(X, U, invariants, state_variables, input_variables, re
             push!(U, h)
         else
             # combination of state variables and input variables
-            loc_or_trans, inv_or_grd = ref_tuple
-            error_msg_var(loc_or_trans, invi, inv_or_grd)
+            loc_or_trans, id = ref_tuple
+            error_msg_var(loc_or_trans, invi, id)
         end
     end
 end
