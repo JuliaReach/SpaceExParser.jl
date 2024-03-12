@@ -1,6 +1,3 @@
-import Base: convert
-import SymEngine: convert, free_symbols
-
 """
    is_linearcombination(L::Basic)
 
