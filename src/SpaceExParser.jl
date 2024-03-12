@@ -6,8 +6,22 @@ module SpaceExParser
 Load dependencies
 =========================================#
 
+using HybridSystems, LazySets
 using DataStructures: OrderedDict
-using EzXML, HybridSystems, LazySets, MathematicalSystems, SymEngine
+import MathematicalSystems
+using MathematicalSystems: AbstractSystem, AbstractContinuousSystem,
+                           LinearContinuousSystem, LinearControlContinuousSystem,
+                           AffineContinuousSystem,
+                           AffineControlContinuousSystem,
+                           ConstrainedLinearContinuousSystem,
+                           ConstrainedLinearControlContinuousSystem,
+                           ConstrainedLinearControlDiscreteSystem,
+                           ConstrainedAffineContinuousSystem,
+                           ConstrainedAffineControlContinuousSystem
+using EzXML: readxml, root, eachelement, nodename, nodecontent
+using SymEngine: Basic, subs
+import Base: convert
+import SymEngine: convert, free_symbols
 
 #=========================
 Input/Output functions
