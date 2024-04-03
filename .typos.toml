@@ -1,0 +1,3 @@
+[files]
+# do not check the following files:
+extend-exclude = ["*.xml"]
