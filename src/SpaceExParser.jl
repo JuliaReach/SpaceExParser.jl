@@ -1,5 +1,7 @@
 module SpaceExParser
 
+export readsxmodel, writesxmodel
+
 #=========================================
 Load dependencies
 =========================================#
@@ -10,7 +12,6 @@ using EzXML, HybridSystems, LazySets, MathematicalSystems, SymEngine
 #=========================
 Input/Output functions
 ==========================#
-export readsxmodel
 include("io.jl")
 
 #====================
@@ -27,7 +28,6 @@ include("symbolic.jl")
 #==========================
 Writing systems to new file
 ===========================#
-export writesxmodel
 include("write.jl")
 
 end # module
