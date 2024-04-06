@@ -1,31 +1,3 @@
-# ==============
-# API extensions
-# ==============
-
-function MathematicalSystems.statedim(H::HybridSystem)
-    ns = [statedim(H, i) for i in 1:nmodes(H)]
-    if !all(==(ns[1]), ns)
-        @warn("the number of state dimensions differs across locations")
-    end
-    return maximum(ns)
-end
-
-function MathematicalSystems.inputdim(H::HybridSystem)
-    ms = [inputdim(H, i) for i in 1:nmodes(H)]
-    if !all(==(ms[1]), ms)
-        @warn("the number of input dimensions differs across locations")
-    end
-    return maximum(ms)
-end
-
-function MathematicalSystems.isconstrained(X::LazySet)
-    return !isuniversal(X)
-end
-
-function MathematicalSystems.isconstrained(v::AbstractVector{<:LazySet})
-    return !all(isuniversal, v)
-end
-
 # ===========
 # Indentation
 # ===========
@@ -153,19 +125,37 @@ function _write_invariant(io, system, dictionary, indentation)
         return  # nothing to write
     end
 
-    _write_indented(io, "<invariant>", indentation)
-    indent!(indentation)
+    wrote_prefix = false
 
     X = stateset(system)
-    if !isnothing(X)
+    if !isnothing(X) && !isuniversal(X)
+        if !wrote_prefix
+            _write_invariant_prefix(io, indentation)
+            wrote_prefix = true
+        end
         _write_state_constraints_specific(io, system, X, dictionary, indentation)
     end
 
     U = inputset(system)
-    if !isnothing(U)
+    if !isnothing(U) && !isuniversal(U)
+        if !wrote_prefix
+            _write_invariant_prefix(io, indentation)
+            wrote_prefix = true
+        end
         _write_input_constraints_specific(io, system, U, dictionary, indentation)
     end
 
+    if wrote_prefix
+        _write_invariant_suffix(io, indentation)
+    end
+end
+
+function _write_invariant_prefix(io, indentation)
+    _write_indented(io, "<invariant>", indentation)
+    return indent!(indentation)
+end
+
+function _write_invariant_suffix(io, indentation)
     dedent!(indentation)
     return write(io, "</invariant>\n")
 end
@@ -174,11 +164,6 @@ function _write_state_constraints_specific(::IO, ::AbstractSystem, X, ::Dict,
                                            ::Indentation)
     return println("WARNING: state constraints of type $(typeof(X)) are currently " *
                    "not supported and will be ignored")
-end
-
-function _write_state_constraints_specific(::IO, ::AbstractSystem, ::Universe, ::Dict,
-                                           ::Indentation)
-    # nothing to write
 end
 
 function _write_state_constraints_specific(io::IO, ::AbstractSystem, X::AbstractHyperrectangle,
@@ -237,7 +222,7 @@ function _write_state_constraints_specific(io::IO, ::AbstractSystem,
     return write(io, " $operator $b")
 end
 
-function _write_state_constraints_specific(io::IO, system::Dict, X::AbstractVector{<:LazySet},
+function _write_state_constraints_specific(io::IO, system::Dict, X::Intersection,
                                            dictionary::Dict, indentation::Indentation)
     first = true
     for Xi in X
@@ -253,11 +238,6 @@ end
 function _write_input_constraints_specific(::IO, system, U, dictionary, indentation)
     return println("WARNING: input constraints of type $(typeof(U)) are currently " *
                    "not supported and will be ignored")
-end
-
-function _write_input_constraints_specific(::IO, system, U::Universe, dictionary,
-                                           indentation)
-    # nothing to write
 end
 
 function _write_input_constraints_specific(io::IO, ::AbstractSystem, U::AbstractHyperrectangle,
@@ -404,7 +384,7 @@ end
 
 function _write_guard(io, H, transition, dictionary, indentation)
     G = guard(H, transition)
-    if !isconstrained(G)
+    if isuniversal(G)
         return  # nothing to write
     end
     _write_indented(io, "<guard>", indentation)
@@ -418,7 +398,7 @@ function _write_assignment(io, H, transition, dictionary, indentation)
         return  # nothing to write
     end
 
-    n = statedim(H)
+    n = _statedim(H)
     if asgn isa AbstractMap
         if (asgn isa IdentityMap) || (asgn isa ConstrainedIdentityMap)
             return  # nothing to write
@@ -501,4 +481,12 @@ function _write_assignment(io, H, transition, dictionary, indentation)
         end
     end
     return write(io, "</assignment>\n")
+end
+
+function _statedim(H::HybridSystem)
+    ns = [statedim(H, i) for i in 1:nmodes(H)]
+    if !all(==(ns[1]), ns)
+        @warn("the number of state dimensions differs across locations")
+    end
+    return maximum(ns)
 end
