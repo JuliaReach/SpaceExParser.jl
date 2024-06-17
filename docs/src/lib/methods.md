@@ -29,13 +29,3 @@ add_transition_label!
 parse_location
 parse_transition
 ```
-
-### Conversion of symbolic expressions into sets
-
-```@docs
-convert
-free_symbols
-is_halfspace
-is_hyperplane
-is_linearcombination
-```

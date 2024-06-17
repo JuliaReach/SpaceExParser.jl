@@ -20,8 +20,8 @@ using MathematicalSystems: AbstractSystem, AbstractContinuousSystem,
                            ConstrainedAffineControlContinuousSystem
 using EzXML: readxml, root, eachelement, nodename, nodecontent
 using SymEngine: Basic, subs
+
 import Base: convert
-import SymEngine: convert, free_symbols
 
 #=========================
 Input/Output functions
@@ -33,10 +33,9 @@ Parsing SpaceEx files
 =====================#
 include("parse.jl")
 
-#================================================
-Converting symbolic expressions and systems types
-=================================================#
-include("convert.jl")
+#===============================================
+Converting symbolic expressions and system types
+================================================#
 include("symbolic.jl")
 
 #==========================
