@@ -208,16 +208,16 @@ end
 # ref_tuple is used for the error message
 function _add_invariants!(X, U, invariants, state_variables, input_variables, ref_tuple)
     for invi in invariants
-        if is_hyperplane(invi)
+        if LazySets._is_hyperplane(invi)
             set_type = Hyperplane{NUM}
-        elseif is_halfspace(invi)
+        elseif LazySets._is_halfspace(invi)
             set_type = HalfSpace{NUM}
         else
             loc_or_trans, id = ref_tuple
             error_msg_set(loc_or_trans, invi, id)
         end
 
-        vars = free_symbols(invi, set_type)
+        vars = LazySets.free_symbols(invi, set_type)
         got_state_invariant = all(si in state_variables for si in vars)
         got_input_invariant = all(si in input_variables for si in vars)
         if got_state_invariant
