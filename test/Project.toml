@@ -7,7 +7,7 @@ MathematicalSystems = "d14a8603-c872-5ed3-9ece-53e0e82e39da"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
-Aqua = "0.8"
+Aqua = "0.8.9"
 EzXML = "1"
 HybridSystems = "0.4"
 LazySets = "2.14"
