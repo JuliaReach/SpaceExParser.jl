@@ -91,7 +91,7 @@ function readsxmodel(file; raw_dict=false, ST=nothing, kwargs...)
     # hybrid automaton with the given number of locations
     automaton = GraphAutomaton(nlocations)
 
-    # ditionary with variables names and their properties
+    # dictionary with variables names and their properties
     variables = OrderedDict{Symbol,Dict{String,Any}}()
 
     # set of labels for the transitions
