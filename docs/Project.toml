@@ -5,5 +5,5 @@ SymEngine = "123dc426-2d89-5057-bbad-38513e3affd8"
 
 [compat]
 Documenter = "1"
-LazySets = "2.14, 3"
+LazySets = "3"
 SymEngine = "0.11, 0.12"
