@@ -36,7 +36,7 @@ To run the unit tests locally, you can do:
 ```julia
 julia> using Pkg
 
-julia> Pkg.test("ReachabilityBase")
+julia> Pkg.test("SpaceExParser")
 ```
 
 We also advise adding new unit tests when adding new features to ensure

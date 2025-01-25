@@ -20,10 +20,10 @@ The examples consist of single hybrid automata that are constructed via flatteni
 
 However, note that the flattening process changes the original model and may induce parsing errors. The parsing errors only appear when the constructed model is visualized/analyzed with the Model Editor or/and the Web Interface. There are no parsing errors with the source code/executable SpaceEx. A list of identified parsing problems follows below.
 
-1. Special symbols, e.g. ~, _ in the variable and location names
+1. Special symbols, e.g. `~`, `_` in the variable and location names
 2. Special characters, e.g. Greek or Russian letters
-3. Nondeterministic flows, e.g. x'==x+w1, where 0<w1<0.1 (see bball_nondet)
-4. Nondeterministic resets, e.g. v' == -0.75*v+w2 (see bball_nondet)
+3. Nondeterministic flows, e.g. `x'==x+w1`, where `0<w1<0.1` (see `bball_nondet`)
+4. Nondeterministic resets, e.g. `v' == -0.75*v+w2` (see `bball_nondet`)
 5. Naming issues, e.g. default variable name is component.subcomponent.variable
 
 The aforementioned problems would yield errors/warnings when parsed.
