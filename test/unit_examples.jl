@@ -1,5 +1,5 @@
 @testset "Bouncing ball" begin
-    H = readsxmodel("../examples/bball/bball_flattened.xml")
+    H = readsxmodel(joinpath(@__DIR__, "../examples/bball/bball_flattened.xml"))
     @test nmodes(H) == 1
     @test ntransitions(H) == 1
 
@@ -13,7 +13,8 @@
 end
 
 @testset "Van der Pol" begin
-    H = readsxmodel("../examples/van_der_pol_fourth_quadrant/van_der_pol_fourth_quadrant.xml")
+    H = readsxmodel(joinpath(@__DIR__,
+                             "../examples/van_der_pol_fourth_quadrant/van_der_pol_fourth_quadrant.xml"))
     @test nmodes(H) == 1
     @test ntransitions(H) == 0
 
@@ -23,7 +24,8 @@ end
 end
 
 @testset "Lotka-Volterra" begin
-    H = readsxmodel("../examples/lotka_volterra_fourth_quadrant/lotka_volterra_fourth_quadrant.xml")
+    H = readsxmodel(joinpath(@__DIR__,
+                             "../examples/lotka_volterra_fourth_quadrant/lotka_volterra_fourth_quadrant.xml"))
     @test nmodes(H) == 1
     @test ntransitions(H) == 0
 
@@ -33,7 +35,7 @@ end
 end
 
 @testset "Circle" begin
-    H = readsxmodel("../examples/circle/circle_flattened.xml")
+    H = readsxmodel(joinpath(@__DIR__, "../examples/circle/circle_flattened.xml"))
     @test nmodes(H) == 2
     @test ntransitions(H) == 2
     for (i, ti) in enumerate(transitions(H))
