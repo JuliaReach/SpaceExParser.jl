@@ -6,11 +6,17 @@ export readsxmodel, writesxmodel
 Load dependencies
 =========================================#
 
-using HybridSystems, LazySets
 using DataStructures: OrderedDict
-import MathematicalSystems
-using MathematicalSystems: AbstractSystem, AbstractContinuousSystem,
-                           LinearContinuousSystem, LinearControlContinuousSystem,
+using EzXML: readxml, root, eachelement, nodename, nodecontent
+using HybridSystems: AbstractSwitching, AutonomousSwitching, GraphAutomaton,
+                     HybridSystem, add_transition!, assignment, guard, inputdim,
+                     inputset, nmodes, ntransitions, resetmap, source, statedim,
+                     stateset, target, transitions
+using LazySets: LazySets, AbstractHyperrectangle, HalfSpace, Hyperplane,
+                Intersection, LazySet, Singleton, dim, high, isuniversal, low
+using MathematicalSystems: MathematicalSystems, AbstractSystem,
+                           AbstractContinuousSystem, LinearContinuousSystem,
+                           LinearControlContinuousSystem,
                            AffineContinuousSystem,
                            AffineControlContinuousSystem,
                            ConstrainedLinearContinuousSystem,
@@ -18,8 +24,7 @@ using MathematicalSystems: AbstractSystem, AbstractContinuousSystem,
                            ConstrainedLinearControlDiscreteSystem,
                            ConstrainedAffineContinuousSystem,
                            ConstrainedAffineControlContinuousSystem
-using EzXML: readxml, root, eachelement, nodename, nodecontent
-using SymEngine: Basic, subs
+using SymEngine: Basic, free_symbols, subs
 
 import Base: convert
 
