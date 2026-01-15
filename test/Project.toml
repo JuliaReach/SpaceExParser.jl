@@ -1,5 +1,6 @@
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+ExplicitImports = "7d51a73a-1435-4ff3-83d9-f097790105c7"
 EzXML = "8f5d6c58-4d21-5cfd-889c-e3ad7ee6a615"
 HybridSystems = "2207ec0c-686c-5054-b4d2-543502888820"
 LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
@@ -8,6 +9,7 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
 Aqua = "0.8.9"
+ExplicitImports = "1"
 EzXML = "1"
 HybridSystems = "0.4"
 LazySets = "3, 4, 5"

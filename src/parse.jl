@@ -1,4 +1,4 @@
-const _parse_s = Base.Meta.parse
+const _parse_s = Base.Meta.parse  # NOTE: this is an internal function
 const _parse_t = Base.parse
 
 """
