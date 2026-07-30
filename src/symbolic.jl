@@ -205,12 +205,17 @@ function error_msg_var(::Val{:transition}, g, t)
     throw(ArgumentError("guard $g of transition $t " * STR_VAR))
 end
 
+const _ishyperplanar = isdefined(LazySets, :_ishyperplanar) ? LazySets._ishyperplanar :  # NOTE: this is an internal function
+                       Base.get_extension(LazySets, :LazySetsSymEngineExt)._ishyperplanar
+const _ishalfspace = isdefined(LazySets, :_ishalfspace) ? LazySets._ishalfspace :  # NOTE: this is an internal function
+                     Base.get_extension(LazySets, :LazySetsSymEngineExt)._ishalfspace
+
 # ref_tuple is used for the error message
 function _add_invariants!(X, U, invariants, state_variables, input_variables, ref_tuple)
     for invi in invariants
-        if LazySets._ishyperplanar(invi)  # NOTE: this is an internal function
+        if _ishyperplanar(invi)
             set_type = Hyperplane{NUM}
-        elseif LazySets._ishalfspace(invi)  # NOTE: this is an internal function
+        elseif _ishalfspace(invi)
             set_type = HalfSpace{NUM}
         else
             loc_or_trans, id = ref_tuple
