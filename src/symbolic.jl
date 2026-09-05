@@ -190,19 +190,19 @@ const STR_SET = "is neither a hyperplane nor a half-space; conversion from this 
 const STR_VAR = "contains a combination of state variables and input variables"
 
 function error_msg_set(::Val{:location}, i, l)
-    throw(ArgumentError("invariant $i of location $l " * STR_SET))
+    return throw(ArgumentError("invariant $i of location $l " * STR_SET))
 end
 
 function error_msg_var(::Val{:location}, i, l)
-    throw(ArgumentError("invariant $i of location $l " * STR_VAR))
+    return throw(ArgumentError("invariant $i of location $l " * STR_VAR))
 end
 
 function error_msg_set(::Val{:transition}, g, t)
-    throw(ArgumentError("guard $g of transition $t " * STR_SET))
+    return throw(ArgumentError("guard $g of transition $t " * STR_SET))
 end
 
 function error_msg_var(::Val{:transition}, g, t)
-    throw(ArgumentError("guard $g of transition $t " * STR_VAR))
+    return throw(ArgumentError("guard $g of transition $t " * STR_VAR))
 end
 
 const _ishyperplanar = isdefined(LazySets, :_ishyperplanar) ? LazySets._ishyperplanar :  # NOTE: this is an internal function
