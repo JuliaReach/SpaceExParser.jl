@@ -360,9 +360,9 @@ function _write_transitions(::IO, system::AbstractContinuousSystem, dictionary,
     # nothing to write
 end
 
-function _write_transitions(io, system::HybridSystem, dictionary, indentation)
-    for transition in transitions(system)
-        _write_transition(io, system, transition, dictionary, indentation)
+function _write_transitions(io, H::HybridSystem, dictionary, indentation)
+    for transition in transitions(H)
+        _write_transition(io, H, transition, dictionary, indentation)
     end
 end
 
@@ -388,7 +388,7 @@ function _write_guard(io, H, transition, dictionary, indentation)
         return  # nothing to write
     end
     _write_indented(io, "<guard>", indentation)
-    _write_state_constraints_specific(io, system, G, dictionary, indentation)
+    _write_state_constraints_specific(io, H, G, dictionary, indentation)
     return write(io, "</guard>\n")
 end
 
@@ -419,12 +419,13 @@ function _write_assignment(io, H, transition, dictionary, indentation)
                 end
             end
         else
-            @warn("only linear assignments are supported at the moment")
+            throw(ArgumentError("only linear assignments are supported at the moment"))
         end
     else
         A = state_matrix(asgn)
+        c = zeros(n)
         if !iszero(input_matrix(asgn))
-            @warn("only linear assignments are supported at the moment")
+            throw(ArgumentError("only linear assignments are supported at the moment"))
         end
     end
 

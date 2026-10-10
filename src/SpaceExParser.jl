@@ -23,7 +23,11 @@ using MathematicalSystems: MathematicalSystems, AbstractSystem,
                            ConstrainedLinearControlContinuousSystem,
                            ConstrainedLinearControlDiscreteSystem,
                            ConstrainedAffineContinuousSystem,
-                           ConstrainedAffineControlContinuousSystem
+                           ConstrainedAffineControlContinuousSystem,
+                           AbstractMap, IdentityMap, ConstrainedIdentityMap,
+                           ConstrainedLinearMap, ConstrainedAffineMap,
+                           ConstrainedResetMap, affine_term, input_matrix,
+                           isconstrained, state_matrix
 using SymEngine: Basic, free_symbols, subs
 
 import Base: convert
