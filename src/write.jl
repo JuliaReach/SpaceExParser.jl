@@ -272,13 +272,10 @@ function _write_flow_specific(io,
     A = state_matrix(system)
     n = statedim(system)
 
-    B = input_matrix(system)  # returns `nothing` for systems with no inputs
     m = inputdim(system)
+    B = m > 0 ? input_matrix(system) : A
 
-    c = affine_term(system)
-    if isnothing(c)
-        c = zeros(eltype(A), n)
-    end
+    c = isaffine(system) ? affine_term(system) : [first(A)]
 
     for i in 1:n
         xi = _variable_name(i, dictionary)
@@ -328,7 +325,7 @@ function _write_flow_specific(io,
             write(io, "$prefix$(abs(Bij)) * $uj")
             first = false
         end
-        if c[i] != 0
+        if isaffine(system) && c[i] != 0
             if c[i] < 0
                 if first
                     prefix = "-"
